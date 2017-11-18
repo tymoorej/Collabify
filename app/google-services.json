@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "850128738149",
+    "firebase_url": "https://collabify-3f1bf.firebaseio.com",
+    "project_id": "collabify-3f1bf",
+    "storage_bucket": "collabify-3f1bf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850128738149:android:7009b4b973b197af",
+        "android_client_info": {
+          "package_name": "com.collabify.collabify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "850128738149-qpdjlqnvepf7pl1s7anpt1b04tdkdnrd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD52gNj5XLeaxMjcuHMVrdOAXkAPjKaLD4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
