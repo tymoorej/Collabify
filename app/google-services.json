@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "850128738149-pqf4e9dbfmf38n5dfrgr4ll2trjj0kfn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.collabify.collabify",
+            "certificate_hash": "fd1c350a3ee3294d2e7057eedd3e724e57b556cd"
+          }
+        },
+        {
           "client_id": "850128738149-qpdjlqnvepf7pl1s7anpt1b04tdkdnrd.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "850128738149-qpdjlqnvepf7pl1s7anpt1b04tdkdnrd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
