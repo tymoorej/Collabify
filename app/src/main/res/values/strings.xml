@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Collabify</string>
+    <string name="enter_id">Enter Room ID</string>
+    <string name="join">Join</string>
 </resources>
