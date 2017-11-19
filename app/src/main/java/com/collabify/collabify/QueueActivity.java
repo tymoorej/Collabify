@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.tralg.collabify.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import java.util.ArrayList;
-import com.tralg.collabify.R;
 
 public class MainActivity extends AppCompatActivity {
 

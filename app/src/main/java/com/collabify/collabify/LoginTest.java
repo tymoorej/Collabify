@@ -8,7 +8,7 @@ import android.util.Log;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.tralg.collabify.R;
+
 
 public class LoginTest extends AppCompatActivity {
 
@@ -38,8 +38,8 @@ public class LoginTest extends AppCompatActivity {
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                SearchSpotify search = new SearchSpotify(response.getAccessToken());
-                search.test(response.getAccessToken());
+                Network n = new Network();
+                n.execute(response.getAccessToken());
             }
         }
     }

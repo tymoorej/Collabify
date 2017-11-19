@@ -38,6 +38,10 @@ dependencies {
     compile 'com.firebase:firebase-client-android:2.5.0'
     compile 'com.spotify.android:auth:1.0.0-alpha'
     compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.android.support:recyclerview-v7:26.1.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.google.guava:guava:18.0'
 }
 
 
