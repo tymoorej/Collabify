@@ -2,31 +2,21 @@ package com.collabify.collabify;
 
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.ArrayList;
+
 /**
  * Created by Tymoore on 11/18/2017.
  */
 
 public class Song {
-    String imageURL;
-    String songURL;
+
     int votes;
-    String roomID;
-    String userID;
-    String title;
-    String artist;
     String songID;
 
 
-    public Song(String imageURL, String songURL, int votes, String roomID, String userID,
-                String title, String artist, String songID) {
-        this.imageURL = imageURL;
-        this.songURL = songURL;
-        this.votes = votes;
-        this.roomID = roomID;
-        this.userID = userID;
-        this.title = title;
-        this.artist = artist;
+    public Song(String songID, int votes) {
         this.songID=songID;
+        this.votes=votes;
     }
 
     public Song() {
@@ -34,6 +24,17 @@ public class Song {
 
     @Override
     public String toString() {
-        return String.valueOf(songID);
+        return String.valueOf(songID) + "     " + String.valueOf(votes);
     }
+
+
+    static public Song getSongFromID(String songID, ArrayList<Song> songs){
+        for(Song s: songs){
+            if(s.songID.equals(songID)){
+                return s;
+            }
+        }
+        return null;
+    }
+
 }
