@@ -1,5 +1,6 @@
 package com.collabify.collabify;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -9,10 +10,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 
+
 import kaaes.spotify.webapi.android.models.Track;
+
+import static com.spotify.sdk.android.authentication.LoginActivity.REQUEST_CODE;
 
 public class SearchActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
@@ -42,25 +49,40 @@ public class SearchActivity extends AppCompatActivity {
         mAdapter = new CustomTrackAdapter(this, mItems);
         mRecyclerView.setAdapter(mAdapter);
 
+
+
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String trackToSearch = searchText.getText().toString();
                 Network network = new Network();
-                network.execute(null, trackToSearch);
-                getResults(network);
+                network.execute("token", trackToSearch);
+
             }
-        });
 
-    }
 
-    public Void getResults(Network network){
+    });}
+
+    public void getResults(Network network){
         tracks = network.getSongs();
 
-        for(Track t: tracks){
-            mItems.add(new RecyclerViewClass(t.name, t.artists.get(0).toString(), 0, t.uri));
+//        for(Track t: tracks){
+//            mItems.add(new RecyclerViewClass(t.name, t.artists.get(0).toString(), 0, t.uri));
+//        }
+//        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        // Check if result comes from the correct activity
+        if (requestCode == REQUEST_CODE) {
+            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
+                Network n = new Network();
+                n.execute(response.getAccessToken(), "kid cudi");
+            }
         }
-        mAdapter.notifyDataSetChanged();
-        return null;
     }
 }

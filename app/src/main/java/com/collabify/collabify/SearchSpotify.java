@@ -2,6 +2,7 @@ package com.collabify.collabify;
 
 import android.util.Log;
 
+import java.net.HttpURLConnection;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -33,9 +34,10 @@ public class SearchSpotify<T> {
 
     public static List<Track> queryTracks(String token, String track) {
         SpotifyApi api = new SpotifyApi();
-        api.setAccessToken(token);
         SpotifyService spotify = api.getService();
+        api.setAccessToken(token);
         Log.d("SEARCHING", track);
         return spotify.searchTracks(track).tracks.items;
+
     }
 }
