@@ -30,9 +30,10 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import static android.support.v4.media.session.MediaButtonReceiver.handleIntent;
 
-public class SongSearch extends AppCompatActivity implements ConnectionStateCallback {
+public class SongSearch extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     // Private Attributes
+    private SpotifyPlayer mPlayer;
     private static final String CLIENT_ID = "6774f2a93c0940eda1b1205da6a0190d";
     private static final String REDIRECT_URI = "collabify-test://callback";
     // Request code that will be used to verify if the result comes from correct activity
@@ -49,6 +50,25 @@ public class SongSearch extends AppCompatActivity implements ConnectionStateCall
         setSupportActionBar(toolbar);
 
         handleIntent(getIntent());
+
+        Intent intent = getIntent();
+        String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
+        String Token = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+
+        Config playerConfig = new Config(this, Token, MainActivity.getClientId());
+        Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer spotifyPlayer) {
+                mPlayer = spotifyPlayer;
+                mPlayer.addConnectionStateCallback(SongSearch.this);
+                mPlayer.addNotificationCallback(SongSearch.this);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
+            }
+        });
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
@@ -150,5 +170,29 @@ public class SongSearch extends AppCompatActivity implements ConnectionStateCall
     @Override
     public void onConnectionMessage(String s) {
 
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+        Log.d("MainActivity", "Playback event received: " + playerEvent.name());
+        switch (playerEvent) {
+            // Handle event type as necessary
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onPlaybackError(Error error) {
+        Log.d("MainActivity", "Playback error received: " + error.name());
+        switch (error) {
+            // Handle error type as necessary
+            default:
+                break;
+        }
     }
 }

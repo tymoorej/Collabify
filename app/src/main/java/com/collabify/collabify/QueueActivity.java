@@ -88,6 +88,7 @@ public class QueueActivity extends AppCompatActivity implements
                 mItems.add(new RecyclerViewClass(" title", " artist", 0));
                 mAdapter.notifyDataSetChanged();
                 mPlayer.playUri(null, "spotify:track:43SRVceEcjoF6qJjGGjTdw", 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
+
             }
         });
 

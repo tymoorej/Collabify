@@ -5,4 +5,6 @@
     <string name="title_activity_song_search">SongSearch</string>
     <string name="search_title">Search here</string>
     <string name="search_hint">Search...</string>
+    <string name="log_in">Log In</string>
+    <string name="token">Token</string>
 </resources>
