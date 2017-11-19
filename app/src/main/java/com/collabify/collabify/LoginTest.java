@@ -39,7 +39,7 @@ public class LoginTest extends AppCompatActivity {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
                 Network n = new Network();
-                n.execute(response.getAccessToken());
+                n.execute(response.getAccessToken(), "kid cudi");
             }
         }
     }
