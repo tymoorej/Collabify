@@ -97,6 +97,7 @@ public class QueueActivity extends AppCompatActivity {
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("HALP",rooms.toString());
                 if(isPlaying){
                     playButton.setImageResource(android.R.drawable.ic_media_pause);
                 } else {
