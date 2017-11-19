@@ -110,7 +110,4 @@ public class QueueActivity extends AppCompatActivity {
 
     }
 
-    public void doClick(){
-        refreshButton.performClick();
-    }
 }

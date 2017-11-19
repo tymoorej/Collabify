@@ -27,23 +27,6 @@ public class EnterIDActivity extends AppCompatActivity {
 
         joinRoom = (Button) findViewById(R.id.join);
 
-//    joinRoom.setOnClickListener(new View.OnClickListener(){
-//        @Override
-//        public void onClick(View view) {
-////            Intent intent = new Intent(this, QueueActivity.class);
-//            EditText roomID = (EditText) findViewById(R.id.enterID);
-//            String message = roomID.getText().toString();
-//            Room r = Room.getRoomFromID("-KzHKTTBKiazjmImP-KR", rooms);
-//            Log.d("help", r.toString());
-//            ArrayList<Song> songs = r.songs;
-//            for(Song s: songs){
-//                Log.d("help: ", s.toString());
-//            }
-////            intent.putExtra(EXTRA_MESSAGE, message);
-////            intent.putExtra(SONG_ARRAY, songs);
-////            startActivity(intent);
-//        }
-//    });
 
 
     }
