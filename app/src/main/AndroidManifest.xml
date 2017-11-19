@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+<<<<<<< HEAD
         <activity android:name="com.collabify.collabify.QueueActivity" />
 
         <activity android:name="com.collabify.collabify.MainActivity">
@@ -20,12 +21,19 @@
         </activity>
 
         <activity android:name="com.collabify.collabify.EnterIDActivity">
+=======
+        <activity android:name=".MainActivity">
+        </activity>
+        <activity android:name=".QueueActivity" />
+        <activity android:name=".EnterIDActivity">
+>>>>>>> a1d6ceea431b6bbe7d38d639c5cc04d4224398a3
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".HostAndJoinActivity"></activity>
     </application>
 
 </manifest>
