@@ -3,11 +3,12 @@ package com.collabify.collabify;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 
 public class HostAndJoinActivity extends AppCompatActivity {
     public static final String IS_HOST = "com.tralg.collabify.HOST";
-    public static final String EXTRA_MESSAGE = "com.tralg.collabify.MESSAGE";
+    public static final String EXTRA_MESSAGE = "com.collabify.collabify.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,20 +16,15 @@ public class HostAndJoinActivity extends AppCompatActivity {
         setContentView(R.layout.activity_host_and_join);
     }
 
-    public void hostPress(){
+    public void hostPress(View view){
         Intent intent = new Intent(this, QueueActivity.class);
-        EditText roomID = (EditText) findViewById(R.id.enterID);
-        String message = roomID.getText().toString();
         intent.putExtra(IS_HOST, true);
-        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra(EXTRA_MESSAGE, "fucked room yo");
         startActivity(intent);
     }
 
-    public void joinPress(){
-        Intent intent = new Intent(this, QueueActivity.class);
-        EditText roomID = (EditText) findViewById(R.id.enterID);
-        String message = roomID.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
+    public void joinPress(View view){
+        Intent intent = new Intent(this, EnterIDActivity.class);
         startActivity(intent);
     }
 }
