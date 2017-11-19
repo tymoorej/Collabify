@@ -41,7 +41,7 @@ public class Network extends AsyncTask<String, Void, List<Track>> {
     @Override
     protected void onPostExecute(List<Track> lv) {
         SearchActivity sa = new SearchActivity();
-        String result = sa.getResults(this);
+        Object result = sa.getResults(this);
         delegate.processFinish(result);
     }
 }
