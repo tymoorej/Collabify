@@ -11,6 +11,8 @@
         android:theme="@style/AppTheme">
         <activity android:name="com.collabify.collabify.QueueActivity" />
         <activity android:name="com.collabify.collabify.EnterIDActivity">
+        </activity>
+        <activity android:name="com.collabify.collabify.LoginTest">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
