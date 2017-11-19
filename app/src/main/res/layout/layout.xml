@@ -15,7 +15,7 @@
         android:background="#ffcccccc" />
 
     <TextView
-        android:id="@+id/listTitle"
+        android:id="@+id/trackTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/listImage"
@@ -28,7 +28,7 @@
         android:id="@+id/listDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/listTitle"
+        android:layout_below="@+id/trackTitle"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/listImage"
         android:maxLines="4"
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/listTitle"
+        android:layout_alignTop="@+id/trackTitle"
         android:layout_marginEnd="17dp"
         app:srcCompat="@android:drawable/arrow_up_float" />
 
