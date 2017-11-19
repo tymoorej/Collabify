@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements
     // Request code that will be used to verify if the result comes from correct activity
     // Can be any integer
     public static final String EXTRA_MESSAGE = "token";
+    public static final String LIST_SONGS = "empty";
     public AuthenticationResponse response;
     private static final int REQUEST_CODE = 1337;
     public String ss= "";
@@ -183,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onLoggedIn() {
         Log.d("MainActivity", "User logged in");
         //mPlayer.playUri(null, "spotify:track:5syaaFva8b6Kgc1wiHkOFp", 0, 0);
-        Intent intent = new Intent(getApplicationContext(), HostAndJoinActivity.class);
+        Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
         Log.d("PLEASE", ss);
         intent.putExtra(EXTRA_MESSAGE, ss);
         startActivity(intent);
