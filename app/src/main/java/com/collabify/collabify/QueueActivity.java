@@ -1,3 +1,4 @@
+
 package com.collabify.collabify;
 
 import android.content.Intent;
@@ -130,7 +131,6 @@ public class QueueActivity extends AppCompatActivity implements
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("HALP",rooms.toString());
                 if(isPlaying){
                     playButton.setImageResource(android.R.drawable.ic_media_pause);
                 } else {
@@ -196,4 +196,8 @@ public class QueueActivity extends AppCompatActivity implements
                 break;
         }
     }
+
 }
+
+
+
