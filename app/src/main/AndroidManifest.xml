@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.collabify.collabify.QueueActivity" />
+        
         <activity android:name="com.collabify.collabify.EnterIDActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
