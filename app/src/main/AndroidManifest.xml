@@ -9,11 +9,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+=======
+        <activity android:name=".MainActivity"></activity>
+>>>>>>> tryna search
         <activity android:name=".QueueActivity" />
         <activity android:name=".EnterIDActivity">
         </activity>
         <activity android:name=".HostAndJoinActivity" />
-        <activity android:name="com.collabify.collabify.MainActivity">
+=======
+        <activity android:name=".SearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,6 +55,7 @@
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
     </application>
 
 </manifest>

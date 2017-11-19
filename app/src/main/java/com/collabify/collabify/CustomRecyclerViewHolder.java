@@ -17,7 +17,7 @@ public class CustomRecyclerViewHolder extends ViewHolder {
     private ImageButton up, down;
     public CustomRecyclerViewHolder(View itemView) {
         super(itemView);
-        title = (TextView)itemView.findViewById(R.id.listTitle);
+        title = (TextView)itemView.findViewById(R.id.trackTitle);
         artist = (TextView)itemView.findViewById(R.id.listDescription);
         artwork = (ImageView)itemView.findViewById(R.id.listImage);
         votes = (TextView)itemView.findViewById(R.id.votes);
