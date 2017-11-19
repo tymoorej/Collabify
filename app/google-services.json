@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "850128738149-b3tbeqkee1aqbuvvdgs4f7gem8fr5ph1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.collabify.collabify",
+            "certificate_hash": "87f7d93ba7ee3524166a1fa7cb8fda28eeccef9c"
+          }
+        },
+        {
           "client_id": "850128738149-pqf4e9dbfmf38n5dfrgr4ll2trjj0kfn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
