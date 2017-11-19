@@ -2,4 +2,7 @@
     <string name="app_name">Collabify</string>
     <string name="enter_id">Enter Room ID</string>
     <string name="join">Join</string>
+    <string name="title_activity_song_search">SongSearch</string>
+    <string name="search_title">Search here</string>
+    <string name="search_hint">Search...</string>
 </resources>

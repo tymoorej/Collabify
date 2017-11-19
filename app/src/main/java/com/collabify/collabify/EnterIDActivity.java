@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.tralg.collabify.R;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 

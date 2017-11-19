@@ -10,18 +10,31 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.tralg.collabify.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class QueueActivity extends AppCompatActivity {
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.spotify.sdk.android.player.Config;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerEvent;
+import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
 
+public class QueueActivity extends AppCompatActivity implements
+        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+
+    private SpotifyPlayer mPlayer;
     private RecyclerView mRecyclerView;
     private CustomAdapter mAdapter;
     private List<RecyclerViewClass> mItems;
@@ -34,6 +47,23 @@ public class QueueActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
+        String Token = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+
+        Config playerConfig = new Config(this, Token, MainActivity.getClientId());
+        Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer spotifyPlayer) {
+                mPlayer = spotifyPlayer;
+                mPlayer.addConnectionStateCallback(QueueActivity.this);
+                mPlayer.addNotificationCallback(QueueActivity.this);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
+            }
+        });
+
         TextView roomID = findViewById(R.id.RoomID);
         roomID.setText(ID);
 
@@ -56,9 +86,55 @@ public class QueueActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mItems.add(new RecyclerViewClass(" title", " artist", 0));
-                //CustomAdapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
+                mPlayer.playUri(null, "spotify:track:43SRVceEcjoF6qJjGGjTdw", 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
             }
         });
 
+    }
+
+    @Override
+    public void onLoggedIn() {
+        Log.d("MainActivity", "User logged in");
+    }
+
+    @Override
+    public void onLoggedOut() {
+        Log.d("MainActivity", "User logged out");
+    }
+
+    @Override
+    public void onLoginFailed(Error var1) {
+        Log.d("MainActivity", "Login failed");
+    }
+
+    @Override
+    public void onTemporaryError() {
+        Log.d("MainActivity", "Temporary error occurred");
+    }
+
+    @Override
+    public void onConnectionMessage(String message) {
+        Log.d("MainActivity", "Received connection message: " + message);
+    }
+
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+        Log.d("MainActivity", "Playback event received: " + playerEvent.name());
+        switch (playerEvent) {
+            // Handle event type as necessary
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onPlaybackError(Error error) {
+        Log.d("MainActivity", "Playback error received: " + error.name());
+        switch (error) {
+            // Handle error type as necessary
+            default:
+                break;
+        }
     }
 }
