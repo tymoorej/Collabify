@@ -3,20 +3,14 @@ package com.collabify.collabify;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 
-import java.util.ArrayList;
-
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
-
 public class EnterIDActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.tralg.collabify.MESSAGE";
-    public static final String SONG_ARRAY = "com.tralg.collabify.SONGS";
 
     Button joinRoom;
 
@@ -42,3 +36,4 @@ public class EnterIDActivity extends AppCompatActivity {
     }
 
 }
+

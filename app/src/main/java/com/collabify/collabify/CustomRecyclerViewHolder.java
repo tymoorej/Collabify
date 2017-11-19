@@ -6,7 +6,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.collabify.collabify.R;
 
 /**
  * Created by gillianpierce on 2017-11-18.

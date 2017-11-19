@@ -32,3 +32,4 @@ public class HostAndJoinActivity extends AppCompatActivity {
         startActivity(intent);
     }
 }
+
