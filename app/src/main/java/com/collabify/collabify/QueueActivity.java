@@ -54,6 +54,18 @@ public class QueueActivity extends AppCompatActivity implements
     ArrayList<Song> songs;
     Database data;
 
+    private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
+        @Override
+        public void onSuccess() {
+            Log.d("Callback", "OK!");
+        }
+
+        @Override
+        public void onError(Error error) {
+            Log.d("Error","ERROR:" + error);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,7 +132,7 @@ public class QueueActivity extends AppCompatActivity implements
         mAdapter = new CustomAdapter(this, mItems);
         mRecyclerView.setAdapter(mAdapter);
         mUris = new ArrayList<String>();
-        Collections.addAll(mUris, new String[]{"spotify:track:5PX4uS1LqlWEPL69phPVQQ", "spotify:track:1yKabXYK0QxNwgCeEJkREV", "spotify:track:6RD9GItAGZ3gbUbx14okHF"});
+        Collections.addAll(mUris, new String[]{"spotify:track:5PX4uS1LqlWEPL69phPVQQ", "spotify:track:1yKabXYK0QxNwgCeEJkREV", "spotify:track:2TpxZ7JUBn3uw46aR7qd6V"});
         addSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,14 +145,23 @@ public class QueueActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 if(isPlaying){
                     playButton.setImageResource(android.R.drawable.ic_media_pause);
+                    if (mItems.size() != 0) {
+                        String ur = "spotify:track:" ;
+                        Log.d("PLAAY", ur);
+                        mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
+                        mItems.remove(0);
+                        mAdapter.notifyDataSetChanged();
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
                 } else {
                     playButton.setImageResource(android.R.drawable.ic_media_play);
+                    mPlayer.pause(mOperationCallback);
+                    if (mItems.size() != 0) {
+                        String ur = "spotify:track:" + mItems.get(0).getUri();
+                        Log.d("PAUSE", ur);
+                    }
                 }
                 isPlaying = !isPlaying;
-
-                //String ur = "spotify:track:" + mItems.get(0).getUri();
-                mPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
-                mItems.remove(0);
             }
         });
 
