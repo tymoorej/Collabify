@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.collabify.collabify">
-
+    package="com.collabify.collabify"
+    >
+        <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,16 +10,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".QueueActivity" />
-        <activity android:name=".EnterIDActivity">
-        </activity>
-        <activity android:name=".HostAndJoinActivity" />
-        <activity android:name="com.collabify.collabify.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity android:name=".QueueActivity" />
+        <activity android:name=".EnterIDActivity">
+        </activity>
+        <activity android:name=".HostAndJoinActivity" />
+        <activity android:name=".SearchActivity">
         </activity>
 
 
@@ -51,6 +55,7 @@
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
     </application>
 
 </manifest>
