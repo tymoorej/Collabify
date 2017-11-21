@@ -184,10 +184,21 @@ public class MainActivity extends AppCompatActivity implements
     public void onLoggedIn() {
         Log.d("MainActivity", "User logged in");
         //mPlayer.playUri(null, "spotify:track:5syaaFva8b6Kgc1wiHkOFp", 0, 0);
-        Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+        Intent intent = new Intent(getApplicationContext(), HostAndJoinActivity.class);
         Log.d("PLEASE", ss);
         intent.putExtra(EXTRA_MESSAGE, ss);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // *** ULTRA-IMPORTANT ***
+        // ALWAYS call this in your onDestroy() method, otherwise you will leak native resources!
+        // This is an unfortunate necessity due to the different memory management models of
+        // Java's garbage collector and C++ RAII.
+        // For more information, see the documentation on Spotify.destroyPlayer().
+        Spotify.destroyPlayer(this);
+        super.onDestroy();
     }
 
     @Override

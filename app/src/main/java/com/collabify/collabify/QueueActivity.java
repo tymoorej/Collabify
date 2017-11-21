@@ -140,6 +140,9 @@ public class QueueActivity extends AppCompatActivity implements
                 mAdapter.notifyDataSetChanged();
             }
         });
+
+        //TODO: Add a skip to next track button and change the current functionaliy of the buttons
+        //TODO: Also make the add song button go to the add song activity etc.
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
