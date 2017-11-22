@@ -160,8 +160,7 @@ public class QueueActivity extends AppCompatActivity implements
                 if(isPlaying){
                     playButton.setImageResource(android.R.drawable.ic_media_pause);
                     if (mItems.size() != 0) {
-                        String ur = "spotify:track:" ;
-                        Log.d("PLAAY", ur);
+                        Log.d("PLAAY", mItems.get(0).getUri());
                         mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
                         mItems.remove(0);
                         mAdapter.notifyDataSetChanged();
@@ -171,8 +170,7 @@ public class QueueActivity extends AppCompatActivity implements
                     playButton.setImageResource(android.R.drawable.ic_media_play);
                     mPlayer.pause(mOperationCallback);
                     if (mItems.size() != 0) {
-                        String ur = "spotify:track:" + mItems.get(0).getUri();
-                        Log.d("PAUSE", ur);
+                        Log.d("PAUSE", mItems.get(0).getUri());
                     }
                 }
                 isPlaying = !isPlaying;
