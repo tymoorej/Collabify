@@ -1,7 +1,9 @@
 package com.collabify.collabify;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,23 +22,19 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-
 import kaaes.spotify.webapi.android.models.Track;
+
 
 import static com.spotify.sdk.android.authentication.LoginActivity.REQUEST_CODE;
 
+
+
 public class SearchActivity extends AppCompatActivity {
-    private RecyclerView mRecyclerView;
-    private static CustomTrackAdapter mAdapter;
-    private List<RecyclerViewClass> mItems = new ArrayList<>();
-    private RecyclerView.LayoutManager mLayoutManager;
+
     private Button search;
-    private Button daButton;
     private EditText searchText;
     private List<Track> tracks;
     private ListView listOfSongs;
-    //public static String LIST_SONGS = "com.collabify.collabify.fuqdupshizza";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +54,12 @@ public class SearchActivity extends AppCompatActivity {
         ArrayList<Song1> searchedSongs = new ArrayList<Song1>();
         final MyAdapter mAdapter = new MyAdapter(this, searchedSongs);
         listOfSongs.setAdapter(mAdapter);
+        search = (Button)findViewById(R.id.searchButton);
+        searchText = (EditText)findViewById(R.id.searchText);
+
 
         search.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
             public void onClick(View view) {
                // mItems.add(new RecyclerViewClass("Title", "Artist", 0, "uri"));
@@ -121,7 +123,7 @@ public class SearchActivity extends AppCompatActivity {
 
         public String getTitle(){ return this.title;}
         public String getArtist(){return this.artist;}
-    }
+    }}
 
 
-}
+
