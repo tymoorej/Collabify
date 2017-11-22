@@ -53,6 +53,7 @@ public class QueueActivity extends AppCompatActivity implements
     ArrayList<Room> rooms=new ArrayList<>();
     ArrayList<Song> songs;
     Database data;
+    public static final String TOKEN = "com.collabify.collabify.TOKEN";
 
     private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
         @Override
@@ -75,7 +76,7 @@ public class QueueActivity extends AppCompatActivity implements
         Intent intent = getIntent();
 
         String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
-        String Token = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        final String Token = intent.getStringExtra(HostAndJoinActivity.TOKEN);
 
         Config playerConfig = new Config(this, Token, MainActivity.getClientId());
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
@@ -96,7 +97,7 @@ public class QueueActivity extends AppCompatActivity implements
         isHost = intent.getBooleanExtra(HostAndJoinActivity.IS_HOST, false);
         //String ID;
         if(isHost){
-            ID = intent.getStringExtra(HostAndJoinActivity.EXTRA_MESSAGE);
+            ID = intent.getStringExtra(HostAndJoinActivity.ROOM_NAME);
             roomID.setText(ID);
         } else{
             ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
@@ -129,15 +130,25 @@ public class QueueActivity extends AppCompatActivity implements
 
         mItems = new ArrayList<>();
         //adding test items to the list
+        String[] songJustAdded = intent.getStringArrayExtra(SearchActivity.ADDED_SONG);
+        if(songJustAdded != null) {
+            if(songJustAdded.length != 0) {
+                mItems.add(new RecyclerViewClass(songJustAdded[1], songJustAdded[0], 0, songJustAdded[2]));
+            }
+        }
         mAdapter = new CustomAdapter(this, mItems);
         mRecyclerView.setAdapter(mAdapter);
         mUris = new ArrayList<String>();
         Collections.addAll(mUris, new String[]{"spotify:track:5PX4uS1LqlWEPL69phPVQQ", "spotify:track:1yKabXYK0QxNwgCeEJkREV", "spotify:track:2TpxZ7JUBn3uw46aR7qd6V"});
+        mAdapter.notifyDataSetChanged();
         addSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mItems.add(new RecyclerViewClass("title", " artist", 0, mUris.remove(mUris.size() - 1)));
-                mAdapter.notifyDataSetChanged();
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                intent.putExtra(TOKEN, Token);
+                startActivity(intent);
+                //mItems.add(new RecyclerViewClass("title", " artist", 0, mUris.remove(mUris.size() - 1)));
+                //mAdapter.notifyDataSetChanged();
             }
         });
 

@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -38,8 +39,8 @@ public class SearchActivity extends AppCompatActivity {
     //public static String LIST_SONGS = "com.collabify.collabify.fuqdupshizza";
     private EditText searchText;
     private List<Track> tracks;
-
-
+    private String Token;
+    public static String ADDED_SONG = "com.collabify.collabify.fuqdupshizza";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class SearchActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         //String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
-        final String Token = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        Token = intent.getStringExtra(QueueActivity.TOKEN);
         //final String listOfSongs = intent.getStringExtra(SearchActivity.LIST_SONGS);
 
         search = (Button) findViewById(R.id.searchButton);
@@ -63,9 +64,24 @@ public class SearchActivity extends AppCompatActivity {
 
         search = (Button)findViewById(R.id.searchButton);
         searchText = (EditText)findViewById(R.id.searchText);
+        listOfSongs.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+               Song1 song = (Song1)adapterView.getItemAtPosition(i);
+               String title = song.getTitle();
+               String artist = song.getArtist();
+               String uri = song.getUri();
+               String[] values = {title, artist, uri};
+               Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
+               intent.putExtra(ADDED_SONG, values);
+               startActivity(intent);
+            }
+        });
 
         search.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
+            //@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
             public void onClick(View view) {
                // mItems.add(new RecyclerViewClass("Title", "Artist", 0, "uri"));
@@ -129,6 +145,7 @@ public class SearchActivity extends AppCompatActivity {
 
         public String getTitle(){ return this.title;}
         public String getArtist(){return this.artist;}
+        public String getUri(){return this.uri;}
     }
 
 
