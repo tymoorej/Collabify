@@ -24,6 +24,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
         intent.putExtra(IS_HOST, true);
         intent.putExtra(ROOM_NAME, "fucked room yo");
         intent.putExtra(TOKEN, Token);
+        Database.addRoom()
         startActivity(intent);
     }
 
