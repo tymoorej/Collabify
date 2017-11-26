@@ -1,6 +1,8 @@
 package com.collabify.collabify;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +46,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
         holder.title.setText(mItems.get(position).getTitle());
         holder.artist.setText(mItems.get(position).getArtist());
         holder.votes.setText(""+mItems.get(position).getVotes());
+        new DownloadImageTask(holder.artwork).execute(mItems.get(position).getImageURL());
 
         holder.up.setOnClickListener(new View.OnClickListener() {
             @Override

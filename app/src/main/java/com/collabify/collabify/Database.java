@@ -55,6 +55,7 @@ public class Database {
         try {
             DatabaseReference newRef = roomRef.push();
             r.roomID = newRef.getKey();
+            r.songs = new ArrayList<>();
             newRef.setValue(r);
         }
         catch(Exception e){
@@ -62,6 +63,14 @@ public class Database {
         }
     }
 
+    public void addSong(Room r, Song song){
+        try {
+            r.songs.add(song);
+        }
+        catch(Exception e){
+            Log.d("ERROR",e.getMessage());
+        }
+    }
     public void incrementVote(Room r, Song s){
         try {
             for (int i = 0; i < r.songs.size(); i++) {

@@ -8,15 +8,15 @@ import android.graphics.drawable.Drawable;
 
 public class RecyclerViewClass {
     private String title, artist;
-    private Drawable artwork;
+    private String artwork;
     private Integer votes;
     private String uri;
 
 
-    public RecyclerViewClass(String title, String artist, Integer votes, String uri){
+    public RecyclerViewClass(String title, String artist, Integer votes, String uri, String artwork){
         this.title = title;
         this.artist = artist;
-        //this.artwork = artwork;
+        this.artwork = artwork;
         this.votes = votes;
         this.uri = uri;
     }
@@ -44,6 +44,7 @@ public class RecyclerViewClass {
     }
     public Integer getVotes(){ return votes;}
     public String getUri(){return uri;}
+    public String getImageURL(){return artwork;}
     //public Drawable getArtwork(){
         //return artwork;
     //}

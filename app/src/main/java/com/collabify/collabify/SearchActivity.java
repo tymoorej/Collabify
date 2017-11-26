@@ -24,6 +24,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 
 import kaaes.spotify.webapi.android.models.Track;
@@ -41,10 +42,15 @@ public class SearchActivity extends AppCompatActivity {
     private List<Track> tracks;
     private String Token;
     public static String ADDED_SONG = "com.collabify.collabify.fuqdupshizza";
-
+    public static String TOKEN = "com.collabify.collabify.token";
+    public Room currentRoom;
+    public Database data;
+    ArrayList<User> users=new ArrayList<>();
+    ArrayList<Room> rooms=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        data = new Database(this);
+        data.readData(users, rooms);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
@@ -53,7 +59,7 @@ public class SearchActivity extends AppCompatActivity {
         //String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
         Token = intent.getStringExtra(QueueActivity.TOKEN);
         //final String listOfSongs = intent.getStringExtra(SearchActivity.LIST_SONGS);
-
+        currentRoom = Room.getRoomFromID(intent.getStringExtra(QueueActivity.RID),rooms);
         search = (Button) findViewById(R.id.searchButton);
         searchText = (EditText) findViewById(R.id.searchText);
         listOfSongs = (ListView)findViewById(R.id.listView);
@@ -73,9 +79,14 @@ public class SearchActivity extends AppCompatActivity {
                String title = song.getTitle();
                String artist = song.getArtist();
                String uri = song.getUri();
-               String[] values = {title, artist, uri};
+               String imageURL = song.getImageURL();
+               String[] values = {title, artist, uri, imageURL};
+               Song addedSong = new Song(uri, 1);
+               data.addSong(currentRoom, addedSong);
+               QueueActivity.mItems.add(new RecyclerViewClass(title, artist, 0, uri, imageURL));
                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
                intent.putExtra(ADDED_SONG, values);
+               intent.putExtra(TOKEN,Token);
                startActivity(intent);
             }
         });
@@ -115,7 +126,7 @@ public class SearchActivity extends AppCompatActivity {
         try {
             ArrayList<Song1> ListOSongs = new ArrayList<Song1>();
             for (Track t : tracks) {
-                ListOSongs.add(new Song1(t.name, t.artists.get(0).name, t.uri));
+                ListOSongs.add(new Song1(t.name, t.artists.get(0).name, t.uri, t.album.images.get(0).url));
                 //ListOSongs = ListOSongs + "Title: " + t.name + "   Artist: " + t.artists.get(0).name + "\n\n\n";
                 Log.d("SKRAAAA", t.id);
                 //RecyclerViewClass fuckinworkpls = new RecyclerViewClass(t.name, t.artists.get(0).toString(), 0, t.uri);
@@ -137,15 +148,18 @@ public class SearchActivity extends AppCompatActivity {
         String title;
         String artist;
         String uri;
-        public Song1(String title, String artist, String uri){
+        String imageURL;
+        public Song1(String title, String artist, String uri, String imageURL){
             this.title = title;
             this.artist = artist;
             this.uri = uri;
+            this.imageURL = imageURL;
         }
 
         public String getTitle(){ return this.title;}
         public String getArtist(){return this.artist;}
         public String getUri(){return this.uri;}
+        public String getImageURL(){return this.imageURL;}
     }
 
 

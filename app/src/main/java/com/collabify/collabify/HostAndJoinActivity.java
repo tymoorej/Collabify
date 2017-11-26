@@ -11,20 +11,23 @@ public class HostAndJoinActivity extends AppCompatActivity {
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public String Token;
+    public Database d;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_and_join);
         Intent intent = getIntent();
         Token = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        d = new Database(getApplicationContext());
     }
 
     public void hostPress(View view){
+        Room r = new Room();
+        d.addRoom(r);
         Intent intent = new Intent(this, QueueActivity.class);
         intent.putExtra(IS_HOST, true);
-        intent.putExtra(ROOM_NAME, "fucked room yo");
+        intent.putExtra(ROOM_NAME, r.roomID);
         intent.putExtra(TOKEN, Token);
-        Database.addRoom()
         startActivity(intent);
     }
 

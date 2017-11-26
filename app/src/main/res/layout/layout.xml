@@ -42,6 +42,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/trackTitle"
         android:layout_marginEnd="17dp"
+        android:backgroundTint="@color/cool"
         app:srcCompat="@android:drawable/arrow_up_float" />
 
     <ImageButton
@@ -50,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/upVote"
         android:layout_below="@+id/votes"
+        android:backgroundTint="@color/cool"
         app:srcCompat="@android:drawable/arrow_down_float" />
 
     <TextView

@@ -28,9 +28,9 @@ public class Song {
     }
 
 
-    static public Song getSongFromID(String songID, ArrayList<Song> songs){
+    static public Song getSongFromID(String roomID, ArrayList<Song> songs){
         for(Song s: songs){
-            if(s.songID.equals(songID)){
+            if(s.songID.equals(roomID)){
                 return s;
             }
         }
