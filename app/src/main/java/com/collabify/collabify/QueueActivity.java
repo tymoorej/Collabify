@@ -42,7 +42,7 @@ public class QueueActivity extends AppCompatActivity implements
 
     private RecyclerView mRecyclerView;
     private CustomAdapter mAdapter;
-    public static List<RecyclerViewClass> mItems = new ArrayList<>();
+    public static List<Song> mItems = new ArrayList<>();
     private List<String> mUris;
     private RecyclerView.LayoutManager mLayoutManager;
     private boolean isHost;
@@ -60,7 +60,7 @@ public class QueueActivity extends AppCompatActivity implements
     public Room currentRoom;
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String RID = "com.collabify.collabify.RID";
-    public static RecyclerViewClass nowPlaying;
+    public static Song nowPlaying;
     private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
         @Override
         public void onSuccess() {
@@ -79,6 +79,7 @@ public class QueueActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_queue);
         data = new Database(this);
         data.readData(users, rooms);
+
         roomID = (TextView)findViewById(R.id.RoomID);
         roomIDText = roomID.getText().toString();
         currentRoom = Room.getRoomFromID(roomIDText, rooms);

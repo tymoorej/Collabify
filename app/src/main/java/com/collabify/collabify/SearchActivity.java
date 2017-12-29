@@ -64,7 +64,7 @@ public class SearchActivity extends AppCompatActivity {
         searchText = (EditText) findViewById(R.id.searchText);
         listOfSongs = (ListView)findViewById(R.id.listView);
 
-        ArrayList<Song1> searchedSongs = new ArrayList<Song1>();
+        ArrayList<Song> searchedSongs = new ArrayList<Song>();
         final MyAdapter mAdapter = new MyAdapter(this, searchedSongs);
         listOfSongs.setAdapter(mAdapter);
 
@@ -75,15 +75,15 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-               Song1 song = (Song1)adapterView.getItemAtPosition(i);
+               Song song = (Song)adapterView.getItemAtPosition(i);
                String title = song.getTitle();
                String artist = song.getArtist();
                String uri = song.getUri();
                String imageURL = song.getImageURL();
                String[] values = {title, artist, uri, imageURL};
-               Song addedSong = new Song(uri, 1);
+               Song addedSong = song;
                data.addSong(currentRoom, addedSong);
-               QueueActivity.mItems.add(new RecyclerViewClass(title, artist, 0, uri, imageURL,0));
+               QueueActivity.mItems.add(song);
                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
                intent.putExtra(ADDED_SONG, values);
                intent.putExtra(TOKEN,Token);
@@ -101,7 +101,7 @@ public class SearchActivity extends AppCompatActivity {
                 Network network =new Network(new AsyncResponse() {
                     @Override
                     public void processFinish(Object output) {
-                        ArrayList<Song1> searchedSongs = (ArrayList<Song1>)output;
+                        ArrayList<Song> searchedSongs = (ArrayList<Song>)output;
                         ListView l = (ListView)findViewById(R.id.listView);
                         l.setAdapter(new MyAdapter(getApplicationContext(), searchedSongs));
                         search.setVisibility(View.INVISIBLE);
@@ -122,13 +122,13 @@ public class SearchActivity extends AppCompatActivity {
 
 
 
-    public ArrayList<Song1> getResults(Network network) {
+    public ArrayList<Song> getResults(Network network) {
 
         tracks = network.getSongs();
         try {
-            ArrayList<Song1> ListOSongs = new ArrayList<Song1>();
+            ArrayList<Song> ListOSongs = new ArrayList<Song>();
             for (Track t : tracks) {
-                ListOSongs.add(new Song1(t.name, t.artists.get(0).name, t.uri, t.album.images.get(0).url));
+                ListOSongs.add(new Song(t.name, t.artists.get(0).name, 0, t.uri, t.album.images.get(0).url, 0));
                 //ListOSongs = ListOSongs + "Title: " + t.name + "   Artist: " + t.artists.get(0).name + "\n\n\n";
                 Log.d("SKRAAAA", t.id);
                 //RecyclerViewClass fuckinworkpls = new RecyclerViewClass(t.name, t.artists.get(0).toString(), 0, t.uri);
@@ -136,33 +136,17 @@ public class SearchActivity extends AppCompatActivity {
                 //SearchActivity.mAdapter.notifyDataSetChanged();
                 //mAdapter.notifyDataSetChanged();
             }
-            final ArrayList<Song1> endResult = ListOSongs;
+            final ArrayList<Song> endResult = ListOSongs;
 
         return endResult;
     } catch (Exception e) {
             e.printStackTrace();
-            return new ArrayList<Song1>();
+            return new ArrayList<Song>();
         }
 
     }
 
-    public class Song1 {
-        String title;
-        String artist;
-        String uri;
-        String imageURL;
-        public Song1(String title, String artist, String uri, String imageURL){
-            this.title = title;
-            this.artist = artist;
-            this.uri = uri;
-            this.imageURL = imageURL;
-        }
 
-        public String getTitle(){ return this.title;}
-        public String getArtist(){return this.artist;}
-        public String getUri(){return this.uri;}
-        public String getImageURL(){return this.imageURL;}
-    }
 
 
     }

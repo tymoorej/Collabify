@@ -17,9 +17,9 @@ import java.util.ArrayList;
 
 public class MyAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<SearchActivity.Song1> songs;
+    private ArrayList<Song> songs;
 
-    public MyAdapter(Context context, ArrayList<SearchActivity.Song1> songs) {
+    public MyAdapter(Context context, ArrayList<Song> songs) {
         this.context = context;
         this.songs = songs;
     }

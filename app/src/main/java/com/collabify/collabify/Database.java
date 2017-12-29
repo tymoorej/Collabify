@@ -74,10 +74,10 @@ public class Database {
     public void incrementVote(Room r, Song s){
         try {
             for (int i = 0; i < r.songs.size(); i++) {
-                if (r.songs.get(i).songID == s.songID) {
+                if (r.songs.get(i).getUri() == s.getUri()) {
                     DatabaseReference songRef = FirebaseDatabase.getInstance().getReference().
                             child("Rooms").child(r.roomID).child("songs").child(String.valueOf(i)).child("votes");
-                    songRef.setValue(s.votes + 1);
+                    songRef.setValue(s.getVotes() + 1);
                 }
             }
         }
@@ -89,10 +89,10 @@ public class Database {
     public void decrementVote(Room r, Song s){
         try {
             for (int i = 0; i < r.songs.size(); i++) {
-                if (r.songs.get(i).songID == s.songID) {
+                if (r.songs.get(i).getUri() == s.getUri()) {
                     DatabaseReference songRef = FirebaseDatabase.getInstance().getReference().
                             child("Rooms").child(r.roomID).child("songs").child(String.valueOf(i)).child("votes");
-                    songRef.setValue(s.votes - 1);
+                    songRef.setValue(s.getVotes() - 1);
                 }
             }
         }
