@@ -11,14 +11,16 @@ public class RecyclerViewClass {
     private String artwork;
     private Integer votes;
     private String uri;
+    private Integer positionInMs;
 
 
-    public RecyclerViewClass(String title, String artist, Integer votes, String uri, String artwork){
+    public RecyclerViewClass(String title, String artist, Integer votes, String uri, String artwork, Integer positionInMs){
         this.title = title;
         this.artist = artist;
         this.artwork = artwork;
         this.votes = votes;
         this.uri = uri;
+        this.positionInMs = positionInMs;
     }
 
 
@@ -34,6 +36,7 @@ public class RecyclerViewClass {
     //}
     public void setVotes(Integer votes){this.votes = votes;}
     public void setUri(String uri){this.uri = uri;}
+    public void setPositionInMs(Integer pos){this.positionInMs = pos;}
 
     //getters
     public String getTitle(){

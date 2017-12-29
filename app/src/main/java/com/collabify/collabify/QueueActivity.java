@@ -46,7 +46,7 @@ public class QueueActivity extends AppCompatActivity implements
     private List<String> mUris;
     private RecyclerView.LayoutManager mLayoutManager;
     private boolean isHost;
-    private boolean isPlaying = false;
+    private boolean isPlaying;
     private ImageButton playButton;
     private ImageButton skipButton;
     private ArrayList<? extends Song> SongList;
@@ -60,7 +60,7 @@ public class QueueActivity extends AppCompatActivity implements
     public Room currentRoom;
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String RID = "com.collabify.collabify.RID";
-    public static RecyclerViewClass nowPlaying = null;
+    public static RecyclerViewClass nowPlaying;
     private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
         @Override
         public void onSuccess() {
@@ -105,7 +105,7 @@ public class QueueActivity extends AppCompatActivity implements
             }
         });
         playButton = (ImageButton)findViewById(R.id.playButton);
-        if(nowPlaying!=null){
+        if(isPlaying){
             TextView title = findViewById(R.id.textView4);
             TextView artist = findViewById(R.id.textView5);
             ImageView image = findViewById(R.id.imageView);
@@ -115,6 +115,14 @@ public class QueueActivity extends AppCompatActivity implements
             isPlaying = true;
             playButton.setImageResource(android.R.drawable.ic_media_pause);
         } else{
+            if (nowPlaying != null) {
+                TextView title = findViewById(R.id.textView4);
+                TextView artist = findViewById(R.id.textView5);
+                ImageView image = findViewById(R.id.imageView);
+                title.setText((CharSequence) nowPlaying.getTitle());
+                artist.setText((CharSequence) nowPlaying.getArtist());
+                new DownloadImageTask(image).execute(nowPlaying.getImageURL());
+            }
             isPlaying = false;
             playButton.setImageResource(android.R.drawable.ic_media_play);
         }
@@ -185,9 +193,20 @@ public class QueueActivity extends AppCompatActivity implements
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("Fuck", String.valueOf(isPlaying));
                 if(isPlaying){
-                    playButton.setImageResource(android.R.drawable.ic_media_pause);
+                    playButton.setImageResource(android.R.drawable.ic_media_play);
+                    mPlayer.pause(mOperationCallback);
+                    //nowPlaying.setPositionInMs();
                     if (mItems.size() != 0) {
+                        Log.d("PAUSE", mItems.get(0).getUri());
+                    }
+                } else {
+                    playButton.setImageResource(android.R.drawable.ic_media_pause);
+                    if (nowPlaying!=null) {
+                        mPlayer.resume(mOperationCallback);
+                    }
+                    else if (mItems.size() != 0) {
                         Log.d("PLAAY", mItems.get(0).getUri());
                         mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
                         TextView title = findViewById(R.id.textView4);
@@ -200,12 +219,6 @@ public class QueueActivity extends AppCompatActivity implements
                         mItems.remove(0);
                         mAdapter.notifyDataSetChanged();
                         mRecyclerView.setAdapter(mAdapter);
-                    }
-                } else {
-                    playButton.setImageResource(android.R.drawable.ic_media_play);
-                    mPlayer.pause(mOperationCallback);
-                    if (mItems.size() != 0) {
-                        Log.d("PAUSE", mItems.get(0).getUri());
                     }
                 }
                 isPlaying = !isPlaying;

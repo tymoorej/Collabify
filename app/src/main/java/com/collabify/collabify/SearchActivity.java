@@ -83,7 +83,7 @@ public class SearchActivity extends AppCompatActivity {
                String[] values = {title, artist, uri, imageURL};
                Song addedSong = new Song(uri, 1);
                data.addSong(currentRoom, addedSong);
-               QueueActivity.mItems.add(new RecyclerViewClass(title, artist, 0, uri, imageURL));
+               QueueActivity.mItems.add(new RecyclerViewClass(title, artist, 0, uri, imageURL,0));
                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
                intent.putExtra(ADDED_SONG, values);
                intent.putExtra(TOKEN,Token);
@@ -104,6 +104,8 @@ public class SearchActivity extends AppCompatActivity {
                         ArrayList<Song1> searchedSongs = (ArrayList<Song1>)output;
                         ListView l = (ListView)findViewById(R.id.listView);
                         l.setAdapter(new MyAdapter(getApplicationContext(), searchedSongs));
+                        search.setVisibility(View.INVISIBLE);
+                        searchText.setVisibility(View.INVISIBLE);
                         mAdapter.notifyDataSetChanged();
                     }
                 });
@@ -144,7 +146,7 @@ public class SearchActivity extends AppCompatActivity {
 
     }
 
-    public class Song1{
+    public class Song1 {
         String title;
         String artist;
         String uri;
