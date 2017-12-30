@@ -23,10 +23,10 @@ import java.util.List;
  */
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecyclerViewHolder> {
-    List<RecyclerViewClass> mItems;
+    List<Song> mItems;
     Context mContext;
 
-    public CustomAdapter(Context context, List<RecyclerViewClass> items){
+    public CustomAdapter(Context context, List<Song> items){
         mContext = context;
         mItems = items;
     }

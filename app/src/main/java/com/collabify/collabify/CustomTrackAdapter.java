@@ -14,10 +14,10 @@ import java.util.List;
  */
 
 public class CustomTrackAdapter extends RecyclerView.Adapter<CustomTrackAdapter.CustomRecyclerViewHolder>{
-    List<RecyclerViewClass> mItems;
+    List<Song> mItems;
     Context mContext;
 
-    public CustomTrackAdapter(Context context, List<RecyclerViewClass> items){
+    public CustomTrackAdapter(Context context, List<Song> items){
         mContext = context;
         mItems = items;
     }

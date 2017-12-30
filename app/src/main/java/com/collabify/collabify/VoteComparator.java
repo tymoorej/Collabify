@@ -6,10 +6,10 @@ import java.util.Comparator;
  * Created by gillianpierce on 2017-11-18.
  */
 
-public class VoteComparator implements Comparator<RecyclerViewClass> {
+public class VoteComparator implements Comparator<Song> {
 
     @Override
-    public int compare(RecyclerViewClass r1, RecyclerViewClass r2) {
+    public int compare(Song r1, Song r2) {
         return Integer.compare(r2.getVotes(), r1.getVotes());
     }
 }
