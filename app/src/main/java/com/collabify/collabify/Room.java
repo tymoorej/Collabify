@@ -7,11 +7,16 @@ import java.util.ArrayList;
  */
 
 public class Room {
+    // FIELDS
     String roomID;
     String hostID;
+    String roomName;
     ArrayList<Song> songs;
 
-    public Room(String roomID, String hostID, ArrayList<Song> songs) {
+    // CONSTRUCTORS
+
+    public Room(String roomName, String roomID, String hostID, ArrayList<Song> songs) {
+        this.roomName = roomName;
         this.roomID = roomID;
         this.hostID = hostID;
         this.songs = songs;
@@ -19,6 +24,34 @@ public class Room {
 
     public Room(){
 
+    }
+
+    // SETTERS
+    public void setRoomID(String roomID) {
+        this.roomID = roomID;
+    }
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
+    public void setRoomHost(String hostID) {
+        this.hostID = hostID;
+    }
+    public void addRoomSong(Song song) {
+        this.songs.add(song);
+    }
+
+    // GETTERS
+    public String getRoomID() {
+        return this.roomID;
+    }
+    public String getRoomName() {
+        return this.roomName;
+    }
+    public String getRoomHost() {
+        return this.hostID;
+    }
+    public ArrayList<Song> getRoomSongs() {
+        return this.songs;
     }
 
 
@@ -33,7 +66,7 @@ public class Room {
 
     static public Room getRoomFromID(String roomID, ArrayList<Room> rooms){
         for(Room r: rooms){
-            if(r.roomID.equals(roomID)){
+            if(r.getRoomID().equals(roomID)){
                 return r;
             }
         }

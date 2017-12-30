@@ -10,7 +10,7 @@ import android.widget.EditText;
 
 public class EnterIDActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE = "com.tralg.collabify.MESSAGE";
+    public static final String EXTRA_MESSAGE = "com.collabify.collabify.MESSAGE";
 
     Button joinRoom;
 

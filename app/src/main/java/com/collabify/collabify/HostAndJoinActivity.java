@@ -7,9 +7,10 @@ import android.view.View;
 import android.widget.EditText;
 
 public class HostAndJoinActivity extends AppCompatActivity {
-    public static final String IS_HOST = "com.tralg.collabify.HOST";
+    public static final String IS_HOST = "com.collabify.collabify.HOST";
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
+    public static final String USER = "com.collabify.collabify.USER";
     public String Token;
     public Database d;
     @Override
@@ -22,12 +23,18 @@ public class HostAndJoinActivity extends AppCompatActivity {
     }
 
     public void hostPress(View view){
+        String roomID = "";
         Room r = new Room();
-        d.addRoom(r);
+        roomID = d.addRoom(r);
+        User u = new User();
+        u = d.addUser(u,true);
+        u.setUserRoom(roomID);
+
         Intent intent = new Intent(this, QueueActivity.class);
         intent.putExtra(IS_HOST, true);
         intent.putExtra(ROOM_NAME, r.roomID);
         intent.putExtra(TOKEN, Token);
+        intent.putExtra(USER, u.getUserID());
         startActivity(intent);
     }
 

@@ -138,12 +138,12 @@ public class MainActivity extends AppCompatActivity implements
 
                 // Auth flow returned an error
                 case ERROR:
-                    Log.d("HELPME","Auth error: " + response.getError());
+                    Log.d("Auth Error","Auth error: " + response.getError());
                     break;
 
                 // Most likely auth flow was cancelled
                 default:
-                    Log.d("HELPME","Auth result: " + response.getType());
+                    Log.d("Cancel Auth Floe","Auth result: " + response.getType());
             }
         }
     }

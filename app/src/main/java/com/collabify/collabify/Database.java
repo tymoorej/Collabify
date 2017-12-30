@@ -34,32 +34,41 @@ public class Database {
             roomRef = FirebaseDatabase.getInstance().getReference().child("Rooms");
         }
         catch(Exception e){
-            Log.d("ERROR",e.getMessage());
+            Log.d("Database ERROR",e.getMessage());
         }
     }
 
 
-    public void addUser(User u){
+    public User addUser(User u, boolean isHost){
         try {
             DatabaseReference newRef = userRef.push();
-            u.userID = newRef.getKey();
+            u.setUserID(newRef.getKey());
+            u.setIsHost(isHost);
             newRef.setValue(u);
         }
         catch(Exception e){
-            Log.d("ERROR",e.getMessage());
+            Log.d("User ERROR",e.getMessage());
+        }
+        finally {
+            return u;
         }
     }
 
 
-    public void addRoom(Room r){
+    public String addRoom(Room r){
+        String roomID = "";
         try {
             DatabaseReference newRef = roomRef.push();
-            r.roomID = newRef.getKey();
+            roomID = newRef.getKey();
+            r.roomID = roomID;
             r.songs = new ArrayList<>();
             newRef.setValue(r);
         }
         catch(Exception e){
-            Log.d("ERROR",e.getMessage());
+            Log.d("Room ERROR",e.getMessage());
+        }
+        finally {
+            return roomID;
         }
     }
 
@@ -68,7 +77,7 @@ public class Database {
             r.songs.add(song);
         }
         catch(Exception e){
-            Log.d("ERROR",e.getMessage());
+            Log.d("Song ERROR",e.getMessage());
         }
     }
     public void incrementVote(Room r, Song s){
@@ -82,7 +91,7 @@ public class Database {
             }
         }
         catch(Exception e){
-            Log.d("ERROR",e.getMessage());
+            Log.d("UpVote ERROR",e.getMessage());
         }
     }
 
@@ -97,7 +106,7 @@ public class Database {
             }
         }
         catch(Exception e){
-            Log.d("ERROR",e.getMessage());
+            Log.d(" DownVote ERROR",e.getMessage());
         }
     }
 
