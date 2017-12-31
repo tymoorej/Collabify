@@ -42,11 +42,11 @@ public class MainActivity extends AppCompatActivity implements
     private static final String REDIRECT_URI = "collabcallback://callback";
     // Request code that will be used to verify if the result comes from correct activity
     // Can be any integer
-    public static final String EXTRA_MESSAGE = "token";
+    public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String LIST_SONGS = "empty";
     public AuthenticationResponse response;
     private static final int REQUEST_CODE = 1337;
-    public String ss= "";
+    public String spotifyToken= "";
 
     private BroadcastReceiver mNetworkStateReceiver;
 
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            ss = response.getAccessToken();
+            spotifyToken = response.getAccessToken();
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
@@ -185,8 +185,8 @@ public class MainActivity extends AppCompatActivity implements
         Log.d("MainActivity", "User logged in");
         //mPlayer.playUri(null, "spotify:track:5syaaFva8b6Kgc1wiHkOFp", 0, 0);
         Intent intent = new Intent(getApplicationContext(), HostAndJoinActivity.class);
-        Log.d("PLEASE", ss);
-        intent.putExtra(EXTRA_MESSAGE, ss);
+        Log.d("PLEASE", spotifyToken);
+        intent.putExtra(TOKEN, spotifyToken);
         startActivity(intent);
     }
 

@@ -60,6 +60,7 @@ public class QueueActivity extends AppCompatActivity implements
     public Room currentRoom;
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String RID = "com.collabify.collabify.RID";
+    public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static Song nowPlaying;
     private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
         @Override
@@ -85,11 +86,13 @@ public class QueueActivity extends AppCompatActivity implements
         currentRoom = Room.getRoomFromID(roomIDText, rooms);
         Intent intent = getIntent();
 
-        String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
-        String Token = intent.getStringExtra(HostAndJoinActivity.TOKEN);
+        String ID = intent.getStringExtra(EnterIDActivity.ROOM_NAME);
+        String Token = intent.getStringExtra(TOKEN);
+        //String Token = intent.getStringExtra(HostAndJoinActivity.TOKEN);
+        /*
         if(Token==null){
             Token = intent.getStringExtra(SearchActivity.TOKEN);
-        }
+        }*/
 
         Config playerConfig = new Config(this, Token, MainActivity.getClientId());
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
@@ -129,14 +132,17 @@ public class QueueActivity extends AppCompatActivity implements
         }
         final TextView roomID = findViewById(R.id.RoomID);
         isHost = intent.getBooleanExtra(HostAndJoinActivity.IS_HOST, false);
-        //String ID;
+        ID = intent.getStringExtra(HostAndJoinActivity.ROOM_NAME);
+        roomID.setText(ID);
+
         if(isHost){
-            ID = intent.getStringExtra(HostAndJoinActivity.ROOM_NAME);
-            roomID.setText(ID);
+            playButton.setVisibility(View.VISIBLE);
+            skipButton.setVisibility(View.VISIBLE);
         } else{
-            ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
-            roomID.setText(ID);
+            playButton.setVisibility(View.INVISIBLE);
+            skipButton.setVisibility(View.INVISIBLE);
         }
+
         Button addSong = (Button)findViewById(R.id.addSong);
         refreshButton = (Button)findViewById(R.id.refreshButton);
         skipButton = findViewById(R.id.skip_button);

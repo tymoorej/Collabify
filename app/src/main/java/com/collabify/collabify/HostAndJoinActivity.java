@@ -18,7 +18,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_and_join);
         Intent intent = getIntent();
-        Token = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        Token = intent.getStringExtra(TOKEN);
         d = new Database(getApplicationContext());
     }
 
@@ -39,8 +39,12 @@ public class HostAndJoinActivity extends AppCompatActivity {
     }
 
     public void joinPress(View view){
+        User u = new User();
+        u = d.addUser(u,false);
+
         Intent intent = new Intent(this, EnterIDActivity.class);
         intent.putExtra(TOKEN, Token);
+        intent.putExtra(USER, u.getUserID());
         startActivity(intent);
     }
 }
