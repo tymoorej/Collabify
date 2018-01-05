@@ -16,8 +16,8 @@ public class EnterIDActivity extends AppCompatActivity {
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String USER = "com.collabify.collabify.USER";
+    public static String userID;
     public String Token;
-    public String userID;
     public Database d;
     public User u;
     public ArrayList<User> users = new ArrayList<>();
@@ -31,6 +31,7 @@ public class EnterIDActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Token = intent.getStringExtra(TOKEN);
         userID = intent.getStringExtra(USER);
+        Log.d("EnterIDActivity", "onCreate: "+userID);
         d = new Database(getApplicationContext());
         d.readData(users, rooms);
 
@@ -49,15 +50,17 @@ public class EnterIDActivity extends AppCompatActivity {
 
 
 
-        if (Room.getRoomFromID(message, rooms) != null && User.getUserFromID(intent.getStringExtra(USER), users) != null) {
+        if (Room.getRoomFromID(message, rooms) != null && u != null) {
             intent.putExtra(ROOM_NAME, message);
             intent.putExtra(USER,u.getUserID());
+            intent.putExtra(TOKEN,Token);
             Log.d("enterIDact", "joinRoom: "+message+ " " + u.getUserID());
             startActivity(intent);
         }
-
-        Toast.makeText(getApplicationContext(), "Invalid Room name...",
-                Toast.LENGTH_SHORT).show();
+        else {
+            Toast.makeText(getApplicationContext(), "Invalid Room name...",
+                    Toast.LENGTH_SHORT).show();
+        }
 
 
     }

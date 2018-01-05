@@ -44,7 +44,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
         String uID = "";
         User u = new User();
         uID = d.addUser(u,false);
-
+        Log.d("HostandJoinButton", "joinPress: "+uID);
         Intent intent = new Intent(this, EnterIDActivity.class);
         intent.putExtra(TOKEN, Token);
         intent.putExtra(USER, uID);

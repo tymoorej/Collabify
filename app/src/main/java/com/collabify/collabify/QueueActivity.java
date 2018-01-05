@@ -51,10 +51,10 @@ public class QueueActivity extends AppCompatActivity implements
     private ImageButton skipButton;
     private ArrayList<? extends Song> SongList;
     private Button refreshButton;
-    ArrayList<User> users=new ArrayList<>();
-    ArrayList<Room> rooms=new ArrayList<>();
-    ArrayList<Song> songs;
-    Database data;
+    public ArrayList<User> users=new ArrayList<>();
+    public ArrayList<Room> rooms=new ArrayList<>();
+    public ArrayList<Song> songs;
+    public Database data;
     public TextView roomID;
     public String roomIDText;
     public Room currentRoom = new Room();
@@ -93,9 +93,13 @@ public class QueueActivity extends AppCompatActivity implements
 //        data.searchUser(intent.getStringExtra(USER),users);
 //        Log.d("Queue", "onCreate: "+ users.size());
 
-        final String userID = intent.getStringExtra(USER);
-        final String ID = intent.getStringExtra(ROOM_NAME);
+        String userID = intent.getStringExtra(USER);
+        String ID = intent.getStringExtra(ROOM_NAME);
         String Token = intent.getStringExtra(TOKEN);
+
+        final String t = Token;
+        final String uID = userID;
+        final String rID = ID;
 
         //String Token = intent.getStringExtra(HostAndJoinActivity.TOKEN);
         /*
@@ -169,10 +173,10 @@ public class QueueActivity extends AppCompatActivity implements
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Room r = Room.getRoomFromID(ID, rooms);
-//                u = User.getUserFromID(userID, users);
-
-                data.searchUser(userID,u);data.searchRoom(ID,currentRoom);
+                currentRoom = Room.getRoomFromID(rID, rooms);
+                u = User.getUserFromID(uID, users);
+                Log.d("QueueActivityRefresh", "onClick: "+currentRoom+" "+u);
+//                data.searchUser(userID,u);data.searchRoom(ID,currentRoom);
                 Log.d("refresh button", currentRoom.toString());
                 Log.d("refresh button", u.toString());
                 songs = currentRoom.songs;
@@ -180,7 +184,7 @@ public class QueueActivity extends AppCompatActivity implements
                 mRecyclerView.setVisibility(View.VISIBLE);
             }
         });
-        doClick();
+        //doClick();
         Log.d("read data", "onCreate: " + users.size() + "<- user, room -> " + rooms.size());
         /*if(mItems == null) {
             mItems = new ArrayList<>();
@@ -197,15 +201,15 @@ public class QueueActivity extends AppCompatActivity implements
         mUris = new ArrayList<String>();
         Collections.addAll(mUris, new String[]{"spotify:track:5PX4uS1LqlWEPL69phPVQQ", "spotify:track:1yKabXYK0QxNwgCeEJkREV", "spotify:track:2TpxZ7JUBn3uw46aR7qd6V"});
         mAdapter.notifyDataSetChanged();
-        final String t = Token;
+
         addSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 intent.putExtra(TOKEN, t);
-                intent.putExtra(RID, roomIDText);
-                intent.putExtra(USER, u.getUserID());
-                Log.d("Queue to search", "onClick: "+u.getUserID());
+                intent.putExtra(RID, rID);
+                intent.putExtra(USER, uID);
+                Log.d("Queue to search", "onClick: "+uID);
                 intent.putExtra(HostAndJoinActivity.IS_HOST, isHost);
                 startActivity(intent);
                 //mItems.add(new RecyclerViewClass("title", " artist", 0, mUris.remove(mUris.size() - 1)));
@@ -274,7 +278,7 @@ public class QueueActivity extends AppCompatActivity implements
     }
 
     public void doClick(){
-        refreshButton.performClick();
+        refreshButton.callOnClick();
     }
 
     @Override

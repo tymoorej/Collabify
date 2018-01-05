@@ -13,8 +13,6 @@ import kaaes.spotify.webapi.android.models.Track;
 
 /**
  * Created by Rizwan Qureshi on 2017-11-19.
- *
- * NOT CURRENTLY USED
  */
 public class SearchSpotify<T> {
 

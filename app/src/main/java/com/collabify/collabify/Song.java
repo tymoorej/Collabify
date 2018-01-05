@@ -65,9 +65,6 @@ public class Song {
     public String getImageURL(){
         return artwork;
     }
-    public String getArtwork(){
-        return this.artwork;
-    }
     public Integer getPositionInMs() {
         return positionInMs;
     }
