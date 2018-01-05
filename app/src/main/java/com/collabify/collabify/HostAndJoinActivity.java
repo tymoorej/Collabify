@@ -3,6 +3,7 @@ package com.collabify.collabify;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -23,28 +24,30 @@ public class HostAndJoinActivity extends AppCompatActivity {
     }
 
     public void hostPress(View view){
-        String roomID = "";
+        String roomID = "";String uID="";
         Room r = new Room();
         roomID = d.addRoom(r);
         User u = new User();
-        u = d.addUser(u,true);
+        uID = d.addUser(u,true);
         u.setUserRoom(roomID);
 
         Intent intent = new Intent(this, QueueActivity.class);
         intent.putExtra(IS_HOST, true);
-        intent.putExtra(ROOM_NAME, r.roomID);
+        intent.putExtra(ROOM_NAME, roomID);
         intent.putExtra(TOKEN, Token);
-        intent.putExtra(USER, u.getUserID());
+        intent.putExtra(USER, uID);
+        Log.d("user", "hostPress: "+u.getUserID());
         startActivity(intent);
     }
 
     public void joinPress(View view){
+        String uID = "";
         User u = new User();
-        u = d.addUser(u,false);
+        uID = d.addUser(u,false);
 
         Intent intent = new Intent(this, EnterIDActivity.class);
         intent.putExtra(TOKEN, Token);
-        intent.putExtra(USER, u.getUserID());
+        intent.putExtra(USER, uID);
         startActivity(intent);
     }
 }

@@ -36,12 +36,18 @@ public class Song {
     public void setArtist(String artist){
         this.artist = artist;
     }
-    //public void setmImage_url(Drawable artwork){
-        //this.artwork = artwork;
-    //}
-    public void setVotes(Integer votes){this.votes = votes;}
-    public void setUri(String uri){this.uri = uri;}
-    public void setPositionInMs(Integer pos){this.positionInMs = pos;}
+    public void setArtwork(String artwork){
+        this.artwork = artwork;
+    }
+    public void setVotes(Integer votes){
+        this.votes = votes;
+    }
+    public void setUri(String uri){
+        this.uri = uri;
+    }
+    public void setPositionInMs(Integer positionInMs){
+        this.positionInMs = positionInMs;
+    }
 
     //getters
     public String getTitle(){
@@ -50,26 +56,42 @@ public class Song {
     public String getArtist(){
         return artist;
     }
-    public Integer getVotes(){ return votes;}
-    public String getUri(){return uri;}
-    public String getImageURL(){return artwork;}
-    //public Drawable getArtwork(){
-        //return artwork;
-    //}
+    public Integer getVotes(){
+        return votes;
+    }
+    public String getUri(){
+        return uri;
+    }
+    public String getImageURL(){
+        return artwork;
+    }
+    public String getArtwork(){
+        return this.artwork;
+    }
+    public Integer getPositionInMs() {
+        return positionInMs;
+    }
 
     @Override
     public String toString() {
-        return String.valueOf(uri) + "     " + String.valueOf(votes);
+        return "User{" +
+                "title='" + title + '\'' +
+                ", artist='" + artist + '\'' +
+                ", votes=" + votes + '\'' +
+                ", uri=" + uri + '\'' +
+                ", PosInMs=" + positionInMs + '\'' +
+                '}';
     }
 
 
-    static public Song getSongFromID(String roomID, ArrayList<Song> songs){
+    static public Song getSongFromID(String uri, ArrayList<Song> songs){
         for(Song s: songs){
-            if(s.uri.equals(roomID)){
+            if(s.uri.equals(uri)){
                 return s;
             }
         }
         return null;
     }
+
 
 }

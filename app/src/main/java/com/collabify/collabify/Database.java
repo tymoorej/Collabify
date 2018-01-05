@@ -5,10 +5,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -39,7 +41,7 @@ public class Database {
     }
 
 
-    public User addUser(User u, boolean isHost){
+    public String addUser(User u, boolean isHost){
         try {
             DatabaseReference newRef = userRef.push();
             u.setUserID(newRef.getKey());
@@ -50,8 +52,24 @@ public class Database {
             Log.d("User ERROR",e.getMessage());
         }
         finally {
-            return u;
+            return u.getUserID();
         }
+    }
+    //TODO: FINISH
+    public void updateUser (User u) {
+        Query citiesQuery = userRef.orderByKey().equalTo(u.getUserID());
+        citiesQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                System.out.println(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -60,8 +78,8 @@ public class Database {
         try {
             DatabaseReference newRef = roomRef.push();
             roomID = newRef.getKey();
-            r.roomID = roomID;
-            r.songs = new ArrayList<>();
+            r.setRoomID(roomID);
+            r.setRoomSongs(new ArrayList<Song>());
             newRef.setValue(r);
         }
         catch(Exception e){
@@ -74,7 +92,7 @@ public class Database {
 
     public void addSong(Room r, Song song){
         try {
-            r.songs.add(song);
+            r.addRoomSong(song);
         }
         catch(Exception e){
             Log.d("Song ERROR",e.getMessage());
@@ -108,6 +126,197 @@ public class Database {
         catch(Exception e){
             Log.d(" DownVote ERROR",e.getMessage());
         }
+    }
+
+    public User toUser(DataSnapshot ds){
+        User u = new User();
+        for (DataSnapshot postSnapshot : ds.getChildren()) {
+            switch (postSnapshot.getKey()) {
+                case ("isHost"):
+                    u.setIsHost(postSnapshot.getValue(Boolean.class));
+                case ("userID"):
+                    u.setUserID(postSnapshot.getValue(String.class));
+            }
+        }
+        return u;
+    }
+
+    public Song toSong(DataSnapshot ds) {
+        Song s = new Song();
+        for (DataSnapshot postSnapshot : ds.getChildren()) {
+            switch (postSnapshot.getKey()) {
+                case ("artist"):
+                    s.setArtist(postSnapshot.getValue(String.class));
+                case ("artwork"):
+                    s.setArtwork(postSnapshot.getValue(String.class));
+                case ("positionInMs"):
+                    s.setPositionInMs(postSnapshot.getValue(Integer.class));
+                case ("uri"):
+                    s.setUri(postSnapshot.getValue(String.class));
+                case ("votes"):
+                    s.setVotes(postSnapshot.getValue(Integer.class));
+            }
+        }
+        return s;
+    }
+
+    public Room toRoom(DataSnapshot ds){
+        Room r = new Room();
+        for (DataSnapshot postSnapshot : ds.getChildren()) {
+            switch (postSnapshot.getKey()) {
+                case ("hostID"):
+                    r.setRoomHost(postSnapshot.getValue(String.class));
+                case ("roomID"):
+                    r.setRoomID(postSnapshot.getValue(String.class));
+                case ("songs"):
+                    for (DataSnapshot songs : postSnapshot.getChildren()) {
+                        r.addRoomSong(toSong(songs));
+                    }
+            }
+        }
+        return r;
+    }
+
+    public void searchUser(final String uID, final User u) {
+        Log.d("searchUser", "Database: "+uID +" "+u);
+
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("searchUser", "onDataChanged: " + dataSnapshot.toString());
+                u.setUserID(dataSnapshot.child(uID).getValue(User.class).getUserID());
+                u.setIsHost(dataSnapshot.child(uID).getValue(User.class).getIsHost());
+                u.setUserRoom(dataSnapshot.child(uID).getValue(User.class).getUserRoom());
+                u.setUserName(dataSnapshot.child(uID).getValue(User.class).getUserName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        /*Query query = userRef.orderByChild("userID").equalTo(uID);
+        query.addChildEventListener(new com.google.firebase.database.ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Log.d("addedUser", "onChildAdded: "+postSnapshot.toString());
+                    switch (postSnapshot.getKey()) {
+                        case ("isHost"):
+                            u.setIsHost(postSnapshot.getValue(Boolean.class));
+                        case ("userID"):
+                            u.setUserID(postSnapshot.getValue(String.class));
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+    }
+
+    public void searchRoom(final String rID, final Room r) {
+        Log.d("roomSearch", "searchRoom: "+rID +" "+r);
+
+
+        roomRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("searchUser", "onDataChanged: " + dataSnapshot.toString());
+                r.setRoomHost(dataSnapshot.child(rID).getValue(Room.class).getRoomHost());
+                r.setRoomID(dataSnapshot.child(rID).getValue(Room.class).getRoomID());
+                r.setRoomSongs(dataSnapshot.child(rID).getValue(Room.class).getRoomSongs());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        Query query = roomRef.orderByChild("roomID").equalTo(rID);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("searchRoom", "onDataChanged: " + dataSnapshot.toString());
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Log.d("searchRoom", "onChildAdded: " + postSnapshot.toString());
+                    switch (postSnapshot.getKey()) {
+                        case ("hostID"):
+                            r.setRoomHost(postSnapshot.getValue(String.class));
+                        case ("roomID"):
+                            r.setRoomID(postSnapshot.getValue(String.class));
+                        case ("songs"):
+                            for (DataSnapshot songs : postSnapshot.getChildren()) {
+                                r.addRoomSong(toSong(songs));
+                            }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        /*
+        Query query = roomRef.orderByChild("roomID").equalTo(rID);
+        query.addChildEventListener(new com.google.firebase.database.ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Log.d("searchRoom", "onChildAdded: "+postSnapshot.toString());
+                    switch (postSnapshot.getKey()) {
+                        case ("hostID"):
+                            r.setRoomHost(postSnapshot.getValue(String.class));
+                        case ("roomID"):
+                            r.setRoomID(postSnapshot.getValue(String.class));
+                        case ("songs"):
+                            for (DataSnapshot songs : postSnapshot.getChildren()) {
+                                r.addRoomSong(toSong(songs));
+                            }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
     }
 
     public void readData(final ArrayList<User> users, final ArrayList<Room> rooms){

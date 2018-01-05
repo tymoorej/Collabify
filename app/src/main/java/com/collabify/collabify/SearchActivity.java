@@ -41,10 +41,14 @@ public class SearchActivity extends AppCompatActivity {
     private EditText searchText;
     private List<Track> tracks;
     private String Token;
-    public static String ADDED_SONG = "com.collabify.collabify.fuqdupshizza";
-    public static String TOKEN = "com.collabify.collabify.token";
+    //public static String ADDED_SONG = "com.collabify.collabify.fuqdupshizza";
+    public static String TOKEN = "com.collabify.collabify.TOKEN";
+    public static String USER = "comn.collabify.collabify.USER";
+    public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public Room currentRoom;
     public Database data;
+    public String uID;
+    public String RID;
     ArrayList<User> users=new ArrayList<>();
     ArrayList<Room> rooms=new ArrayList<>();
     @Override
@@ -56,10 +60,14 @@ public class SearchActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        //String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
-        Token = intent.getStringExtra(QueueActivity.TOKEN);
         //final String listOfSongs = intent.getStringExtra(SearchActivity.LIST_SONGS);
-        currentRoom = Room.getRoomFromID(intent.getStringExtra(QueueActivity.RID),rooms);
+        //String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
+
+        Token = intent.getStringExtra(TOKEN);
+        uID = intent.getStringExtra(USER);
+        RID = intent.getStringExtra(ROOM_NAME);
+        currentRoom = Room.getRoomFromID(intent.getStringExtra(RID),rooms);
+        Log.d("SearchActivity", "onCreate: "+currentRoom);
         search = (Button) findViewById(R.id.searchButton);
         searchText = (EditText) findViewById(R.id.searchText);
         listOfSongs = (ListView)findViewById(R.id.listView);
@@ -85,8 +93,9 @@ public class SearchActivity extends AppCompatActivity {
                data.addSong(currentRoom, addedSong);
                QueueActivity.mItems.add(song);
                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
-               intent.putExtra(ADDED_SONG, values);
+               //intent.putExtra(ADDED_SONG, values);
                intent.putExtra(TOKEN,Token);
+               intent.putExtra(USER, uID);
                startActivity(intent);
             }
         });

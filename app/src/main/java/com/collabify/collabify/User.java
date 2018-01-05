@@ -1,5 +1,7 @@
 package com.collabify.collabify;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -15,14 +17,14 @@ public class User {
 
     // CONSTRUCTORS
 
+    public User(){
+
+    }
     public User(String userID, String name, boolean isHost, String roomID){
         this.userID=userID;
         this.isHost=isHost;
         this.roomID=roomID;
         this.name=name;
-    }
-    public User(){
-
     }
 
     // SETTERS
@@ -57,12 +59,18 @@ public class User {
 
 
     @Override
-    public String toString(){
-        return String.valueOf(name);
+    public String toString() {
+        return "User{" +
+                "userID='" + userID + '\'' +
+                ", name='" + name + '\'' +
+                ", isHost=" + isHost + '\'' +
+                ", roomID=" + roomID + '\'' +
+                '}';
     }
 
     static public User getUserFromID(String userID, ArrayList<User> users){
         for(User u: users){
+            Log.d("USERs", "getUserFromID: "+userID + " " +u.toString());
             if(u.getUserID().equals(userID)){
                 return u;
             }

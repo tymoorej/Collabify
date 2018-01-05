@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 
 /**
@@ -25,6 +28,9 @@ import java.util.List;
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecyclerViewHolder> {
     List<Song> mItems;
     Context mContext;
+    User u = QueueActivity.u;
+    Set<Song> votedSongs= new HashSet<>();
+
 
     public CustomAdapter(Context context, List<Song> items){
         mContext = context;
@@ -51,6 +57,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
         holder.up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("UpClick", "onClick: "+holder);
                 Integer v = mItems.get(holder.getAdapterPosition()).getVotes()+1;
                 mItems.get(holder.getAdapterPosition()).setVotes(v);
                 Collections.sort(mItems, new VoteComparator());
@@ -61,6 +68,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
         holder.down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("DownClick", "onClick: "+holder);
                 Integer v = mItems.get(holder.getAdapterPosition()).getVotes()-1;
                 mItems.get(holder.getAdapterPosition()).setVotes(v);
                 Collections.sort(mItems, new VoteComparator());

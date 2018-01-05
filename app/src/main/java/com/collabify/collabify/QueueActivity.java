@@ -57,11 +57,13 @@ public class QueueActivity extends AppCompatActivity implements
     Database data;
     public TextView roomID;
     public String roomIDText;
-    public Room currentRoom;
+    public Room currentRoom = new Room();
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String RID = "com.collabify.collabify.RID";
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
+    public static final String USER = "com.collabify.collabify.USER";
     public static Song nowPlaying;
+    public static User u = new User();
     private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
         @Override
         public void onSuccess() {
@@ -81,13 +83,20 @@ public class QueueActivity extends AppCompatActivity implements
         data = new Database(this);
         data.readData(users, rooms);
 
+
+        /* NOT NEEDED?
         roomID = (TextView)findViewById(R.id.RoomID);
         roomIDText = roomID.getText().toString();
         currentRoom = Room.getRoomFromID(roomIDText, rooms);
+        */
         Intent intent = getIntent();
+//        data.searchUser(intent.getStringExtra(USER),users);
+//        Log.d("Queue", "onCreate: "+ users.size());
 
-        String ID = intent.getStringExtra(EnterIDActivity.ROOM_NAME);
+        final String userID = intent.getStringExtra(USER);
+        final String ID = intent.getStringExtra(ROOM_NAME);
         String Token = intent.getStringExtra(TOKEN);
+
         //String Token = intent.getStringExtra(HostAndJoinActivity.TOKEN);
         /*
         if(Token==null){
@@ -108,7 +117,12 @@ public class QueueActivity extends AppCompatActivity implements
                 Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
             }
         });
+
         playButton = (ImageButton)findViewById(R.id.playButton);
+        Button addSong = (Button)findViewById(R.id.addSong);
+        refreshButton = (Button)findViewById(R.id.refreshButton);
+        skipButton = findViewById(R.id.skip_button);
+
         if(isPlaying){
             TextView title = findViewById(R.id.textView4);
             TextView artist = findViewById(R.id.textView5);
@@ -132,7 +146,7 @@ public class QueueActivity extends AppCompatActivity implements
         }
         final TextView roomID = findViewById(R.id.RoomID);
         isHost = intent.getBooleanExtra(HostAndJoinActivity.IS_HOST, false);
-        ID = intent.getStringExtra(HostAndJoinActivity.ROOM_NAME);
+        Log.d("HOST", "is host? "+isHost);
         roomID.setText(ID);
 
         if(isHost){
@@ -143,9 +157,6 @@ public class QueueActivity extends AppCompatActivity implements
             skipButton.setVisibility(View.INVISIBLE);
         }
 
-        Button addSong = (Button)findViewById(R.id.addSong);
-        refreshButton = (Button)findViewById(R.id.refreshButton);
-        skipButton = findViewById(R.id.skip_button);
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -158,15 +169,19 @@ public class QueueActivity extends AppCompatActivity implements
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Room r = Room.getRoomFromID("-KzHKTTBKiazjmImP-KR", rooms);
-                Log.d("help", r.toString());
-                songs = r.songs;
+//                Room r = Room.getRoomFromID(ID, rooms);
+//                u = User.getUserFromID(userID, users);
+
+                data.searchUser(userID,u);data.searchRoom(ID,currentRoom);
+                Log.d("refresh button", currentRoom.toString());
+                Log.d("refresh button", u.toString());
+                songs = currentRoom.songs;
                 refreshButton.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
             }
         });
-
-
+        doClick();
+        Log.d("read data", "onCreate: " + users.size() + "<- user, room -> " + rooms.size());
         /*if(mItems == null) {
             mItems = new ArrayList<>();
         }
@@ -189,18 +204,19 @@ public class QueueActivity extends AppCompatActivity implements
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
                 intent.putExtra(TOKEN, t);
                 intent.putExtra(RID, roomIDText);
+                intent.putExtra(USER, u.getUserID());
+                Log.d("Queue to search", "onClick: "+u.getUserID());
+                intent.putExtra(HostAndJoinActivity.IS_HOST, isHost);
                 startActivity(intent);
                 //mItems.add(new RecyclerViewClass("title", " artist", 0, mUris.remove(mUris.size() - 1)));
                 //mAdapter.notifyDataSetChanged();
             }
         });
 
-        //TODO: Add a skip to next track button and change the current functionaliy of the buttons
-        //TODO: Also make the add song button go to the add song activity etc.
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("Fuck", String.valueOf(isPlaying));
+                Log.d("PlayButton", String.valueOf(isPlaying));
                 if(isPlaying){
                     playButton.setImageResource(android.R.drawable.ic_media_play);
                     mPlayer.pause(mOperationCallback);

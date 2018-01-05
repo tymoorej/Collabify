@@ -1,5 +1,7 @@
 package com.collabify.collabify;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -36,6 +38,10 @@ public class Room {
     public void setRoomHost(String hostID) {
         this.hostID = hostID;
     }
+    public void setRoomSongs(ArrayList<Song> songs) {
+        this.songs = songs;
+    }
+
     public void addRoomSong(Song song) {
         this.songs.add(song);
     }
@@ -66,6 +72,7 @@ public class Room {
 
     static public Room getRoomFromID(String roomID, ArrayList<Room> rooms){
         for(Room r: rooms){
+            Log.d("ROOM.java", "getRoomFromID: "+r.toString());
             if(r.getRoomID().equals(roomID)){
                 return r;
             }

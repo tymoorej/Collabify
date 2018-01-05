@@ -30,6 +30,11 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import static android.support.v4.media.session.MediaButtonReceiver.handleIntent;
 
+/**
+ * Created by Luke Slevinsky on 2017-11-19.
+ * NOT CURRENTLY USED
+ */
+
 public class SongSearch extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     // Private Attributes
@@ -52,8 +57,8 @@ public class SongSearch extends AppCompatActivity implements SpotifyPlayer.Notif
         handleIntent(getIntent());
 
         Intent intent = getIntent();
-        String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
-        String Token = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        String ID = intent.getStringExtra(EnterIDActivity.ROOM_NAME);
+        String Token = intent.getStringExtra(MainActivity.TOKEN);
 
         Config playerConfig = new Config(this, Token, MainActivity.getClientId());
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
