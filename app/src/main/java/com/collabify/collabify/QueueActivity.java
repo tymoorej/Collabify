@@ -160,6 +160,7 @@ public class QueueActivity extends AppCompatActivity implements
         refreshButton = (Button)findViewById(R.id.refreshButton);
         skipButton = (ImageButton)findViewById(R.id.skip_button);
         toDelete = (ImageButton)findViewById(R.id.toDeleteButton);
+
         if(mPlayer.getPlaybackState().isPlaying){
 
             TextView title = findViewById(R.id.textView4);
@@ -304,7 +305,6 @@ public class QueueActivity extends AppCompatActivity implements
                 Log.w("Hello", "Failed to read value.", error.toException());
             }
         });
-
 
 
 
