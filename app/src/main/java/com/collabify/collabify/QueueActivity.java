@@ -95,6 +95,29 @@ public class QueueActivity extends AppCompatActivity implements
         }
     };
 
+    /*public boolean songFinished(){
+        if(mPlayer.getPlaybackState().positionMs == mPlayer.getMetadata().currentTrack.durationMs){
+            return true;
+        } return false;
+    }*/
+
+    public void playNextSong(){
+        if(mItems.size()!=0){
+            Log.d("PLAAY", mItems.get(0).getUri());
+            TextView title = findViewById(R.id.textView4);
+            TextView artist = findViewById(R.id.textView5);
+            ImageView image = findViewById(R.id.imageView);
+            title.setText((CharSequence) mItems.get(0).getTitle());
+            artist.setText((CharSequence) mItems.get(0).getArtist());
+            new DownloadImageTask(image).execute(mItems.get(0).getImageURL());
+            nowPlaying = mItems.get(0);
+            mRecyclerView.setAdapter(mAdapter);
+            mPlayer.playUri(null, nowPlaying.getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
+            mItems.remove(0);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +146,7 @@ public class QueueActivity extends AppCompatActivity implements
                 mPlayer = spotifyPlayer;
                 mPlayer.addConnectionStateCallback(QueueActivity.this);
                 mPlayer.addNotificationCallback(QueueActivity.this);
+                //mPlayer.getPlaybackState().positionMs;
             }
 
             @Override
@@ -136,8 +160,8 @@ public class QueueActivity extends AppCompatActivity implements
         refreshButton = (Button)findViewById(R.id.refreshButton);
         skipButton = (ImageButton)findViewById(R.id.skip_button);
         toDelete = (ImageButton)findViewById(R.id.toDeleteButton);
+        if(mPlayer.getPlaybackState().isPlaying){
 
-        if (mPlayer.getPlaybackState().isPlaying){
             TextView title = findViewById(R.id.textView4);
             TextView artist = findViewById(R.id.textView5);
             ImageView image = findViewById(R.id.imageView);
@@ -145,6 +169,7 @@ public class QueueActivity extends AppCompatActivity implements
             artist.setText((CharSequence) nowPlaying.getArtist());
             new DownloadImageTask(image).execute(nowPlaying.getImageURL());
             playButton.setImageResource(android.R.drawable.ic_media_pause);
+
         } else{
             if (nowPlaying != null) {
                 TextView title = findViewById(R.id.textView4);
@@ -370,7 +395,10 @@ public class QueueActivity extends AppCompatActivity implements
                         mRecyclerView.setAdapter(mAdapter);
                     }
                 }
-            }
+                       mPlayer.skipToNext(mOperationCallback);
+                    }
+
+
         });
 
         skipButton.setOnClickListener(new View.OnClickListener(){
@@ -378,7 +406,7 @@ public class QueueActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 if (mItems.size() != 0) {
-                    Log.d("PLAAY", mItems.get(0).getUri());
+                    /*Log.d("PLAAY", mItems.get(0).getUri());
                     mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
                     TextView title = findViewById(R.id.textView4);
                     TextView artist = findViewById(R.id.textView5);
@@ -389,6 +417,17 @@ public class QueueActivity extends AppCompatActivity implements
                     nowPlaying = mItems.get(0);
                     mItems.remove(0);
                     data.updateRoom(mItems, currentRoom);
+                    mAdapter.notifyDataSetChanged();
+                    mRecyclerView.setAdapter(mAdapter);*/
+                    mPlayer.skipToNext(mOperationCallback);
+                    TextView title = findViewById(R.id.textView4);
+                    TextView artist = findViewById(R.id.textView5);
+                    ImageView image = findViewById(R.id.imageView);
+                    title.setText((CharSequence) mItems.get(0).getTitle());
+                    artist.setText((CharSequence) mItems.get(0).getArtist());
+                    new DownloadImageTask(image).execute(mItems.get(0).getImageURL());
+                    nowPlaying = mItems.get(0);
+                    mItems.remove(0);
                     mAdapter.notifyDataSetChanged();
                     mRecyclerView.setAdapter(mAdapter);
                 }
@@ -446,6 +485,13 @@ public class QueueActivity extends AppCompatActivity implements
         Log.d("QueueActivity", "Playback event received: " + playerEvent.name());
         switch (playerEvent) {
             // Handle event type as necessary
+            case kSpPlaybackNotifyTrackChanged:
+                StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+                String cls = stackTraceElements[1].getClassName();
+                int lineNum = stackTraceElements[1].getLineNumber();
+                Log.d("whaaaaat is in da queue", mItems.toString());
+                //playNextSong();
+                //Log.d("whaaaaat is in da queue", mItems.toString());
             default:
                 break;
         }

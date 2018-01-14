@@ -11,6 +11,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import com.spotify.sdk.android.player.Spotify;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+
 public class HostAndJoinActivity extends AppCompatActivity {
     public static final String IS_HOST = "com.collabify.collabify.HOST";
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
@@ -41,6 +49,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
 
     //TODO: Look into user names for rooms
     public void hostPress(View view){
+<<<<<<< HEAD
         CreateRoom.setVisibility(View.VISIBLE);
         RoomNameText.setVisibility(View.VISIBLE);
 
@@ -79,6 +88,22 @@ public class HostAndJoinActivity extends AppCompatActivity {
                 }
                 }
         });
+=======
+        Room r = new Room();
+        d.addRoom(r);
+        SpotifyApi api = new SpotifyApi();
+        api.setAccessToken(Token);
+        SpotifyService spotify = api.getService();
+        Map<String, Object> options = new HashMap<String, Object>();
+        options.put("name", r.roomID);
+        spotify.createPlaylist(spotify.getMe().id, options);
+        Intent intent = new Intent(this, QueueActivity.class);
+        intent.putExtra(IS_HOST, true);
+        intent.putExtra(ROOM_NAME, r.roomID);
+        intent.putExtra(TOKEN, Token);
+        startActivity(intent);
+
+>>>>>>> trying to fix some bugs related to playing the next track in the queue automatically
     }
 
     public void joinPress(View view){

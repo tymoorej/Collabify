@@ -36,7 +36,7 @@ public class SearchActivity extends AppCompatActivity {
 
 
     private Button search;
-    private Button daButton;
+    private Button back;
     private ListView listOfSongs;
     //public static String LIST_SONGS = "com.collabify.collabify.fuqdupshizza";
     private EditText searchText;
@@ -70,52 +70,53 @@ public class SearchActivity extends AppCompatActivity {
         Token = intent.getStringExtra(QueueActivity.TOKEN);
         uID = intent.getStringExtra(USER);
         RID = intent.getStringExtra(QueueActivity.ROOM_NAME);
-        isHost = intent.getBooleanExtra(QueueActivity.IS_HOST,false);
-        Log.d("SearchActivity:", "onCreate Intents: " + Token+"\n " + uID + "\n "+RID);
+        isHost = intent.getBooleanExtra(QueueActivity.IS_HOST, false);
+        Log.d("SearchActivity:", "onCreate Intents: " + Token + "\n " + uID + "\n " + RID);
 
 
         search = (Button) findViewById(R.id.searchButton);
         searchText = (EditText) findViewById(R.id.searchText);
-        listOfSongs = (ListView)findViewById(R.id.listView);
+        listOfSongs = (ListView) findViewById(R.id.listView);
+        back = findViewById(R.id.button2);
 
         ArrayList<Song> searchedSongs = new ArrayList<Song>();
         final MyAdapter mAdapter = new MyAdapter(this, searchedSongs);
         listOfSongs.setAdapter(mAdapter);
 
-        search = (Button)findViewById(R.id.searchButton);
-        searchText = (EditText)findViewById(R.id.searchText);
-        listOfSongs.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        search = (Button) findViewById(R.id.searchButton);
+        searchText = (EditText) findViewById(R.id.searchText);
+        listOfSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-               Song song = (Song)adapterView.getItemAtPosition(i);
-               String title = song.getTitle();
-               String artist = song.getArtist();
-               String uri = song.getUri();
-               String imageURL = song.getImageURL();
-               String[] values = {title, artist, uri, imageURL};
+                Song song = (Song) adapterView.getItemAtPosition(i);
+                String title = song.getTitle();
+                String artist = song.getArtist();
+                String uri = song.getUri();
+                String imageURL = song.getImageURL();
+                String[] values = {title, artist, uri, imageURL};
 
-               currentRoom = Room.getRoomFromID(RID,rooms);
-               Log.d("SearchActivity", "onCreate: "+currentRoom + " " + song.getTitle());
+                currentRoom = Room.getRoomFromID(RID, rooms);
+                Log.d("SearchActivity", "onCreate: " + currentRoom + " " + song.getTitle());
 
-               if (currentRoom.getSongs() == null) {
-                   currentRoom.setRoomSongs(new ArrayList<Song>(
-                           Arrays.asList(song)));
-               } else {
-                   currentRoom.addRoomSong(song);
-               }
+                if (currentRoom.getSongs() == null) {
+                    currentRoom.setRoomSongs(new ArrayList<Song>(
+                            Arrays.asList(song)));
+                } else {
+                    currentRoom.addRoomSong(song);
+                }
 
-               data.updateChild(currentRoom.getClass(), currentRoom.getRoomID(), currentRoom );
-               QueueActivity.mItems.add(song);
+                data.updateChild(currentRoom.getClass(), currentRoom.getRoomID(), currentRoom);
+                QueueActivity.mItems.add(song);
 
-               Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
-               //intent.putExtra(ADDED_SONG, values);
-               intent.putExtra(TOKEN,Token);
-               intent.putExtra(USER, uID);
-               intent.putExtra(ROOM_NAME, RID);
-               intent.putExtra(QueueActivity.IS_HOST, isHost);
-               startActivity(intent);
+                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
+                //intent.putExtra(ADDED_SONG, values);
+                intent.putExtra(TOKEN, Token);
+                intent.putExtra(USER, uID);
+                intent.putExtra(ROOM_NAME, RID);
+                intent.putExtra(QueueActivity.IS_HOST, isHost);
+                startActivity(intent);
             }
         });
 
@@ -123,15 +124,17 @@ public class SearchActivity extends AppCompatActivity {
             //@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
             public void onClick(View view) {
-               // mItems.add(new RecyclerViewClass("Title", "Artist", 0, "uri"));
+                // mItems.add(new RecyclerViewClass("Title", "Artist", 0, "uri"));
                 //mAdapter.notifyDataSetChanged();
+
                 String trackToSearch = searchText.getText().toString();
-                if (trackToSearch.length() != 0){
-                    Network network =new Network(new AsyncResponse() {
+
+                if (trackToSearch.length() != 0) {
+                    Network network = new Network(new AsyncResponse() {
                         @Override
                         public void processFinish(Object output) {
-                            ArrayList<Song> searchedSongs = (ArrayList<Song>)output;
-                            ListView l = (ListView)findViewById(R.id.listView);
+                            ArrayList<Song> searchedSongs = (ArrayList<Song>) output;
+                            ListView l = (ListView) findViewById(R.id.listView);
 
                             l.setAdapter(new MyAdapter(getApplicationContext(), searchedSongs));
                             search.setVisibility(View.INVISIBLE);
@@ -143,13 +146,23 @@ public class SearchActivity extends AppCompatActivity {
                     //mAdapter.notifyDataSetChanged();
                     //getResults(network);
                 }
+
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
+                intent.putExtra(TOKEN, Token);
+                startActivity(intent);
             }
 
 
-        });}
+        });
 
 
-
+    }
 
 
 
