@@ -10,6 +10,7 @@ import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.AlbumSimple;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.UserPrivate;
 
 /**
  * Created by Rizwan Qureshi on 2017-11-19.
@@ -40,4 +41,6 @@ public class SearchSpotify<T> {
         return spotify.searchTracks(track).tracks.items;
 
     }
+
+    public static 
 }

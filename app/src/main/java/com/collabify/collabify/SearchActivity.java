@@ -35,7 +35,7 @@ public class SearchActivity extends AppCompatActivity {
 
 
     private Button search;
-    private Button daButton;
+    private Button back;
     private ListView listOfSongs;
     //public static String LIST_SONGS = "com.collabify.collabify.fuqdupshizza";
     private EditText searchText;
@@ -63,6 +63,7 @@ public class SearchActivity extends AppCompatActivity {
         search = (Button) findViewById(R.id.searchButton);
         searchText = (EditText) findViewById(R.id.searchText);
         listOfSongs = (ListView)findViewById(R.id.listView);
+        back = findViewById(R.id.button2);
 
         ArrayList<Song> searchedSongs = new ArrayList<Song>();
         final MyAdapter mAdapter = new MyAdapter(this, searchedSongs);
@@ -97,6 +98,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onClick(View view) {
                // mItems.add(new RecyclerViewClass("Title", "Artist", 0, "uri"));
                 //mAdapter.notifyDataSetChanged();
+
                 String trackToSearch = searchText.getText().toString();
                 Network network =new Network(new AsyncResponse() {
                     @Override
@@ -106,6 +108,7 @@ public class SearchActivity extends AppCompatActivity {
                         l.setAdapter(new MyAdapter(getApplicationContext(), searchedSongs));
                         search.setVisibility(View.INVISIBLE);
                         searchText.setVisibility(View.INVISIBLE);
+                        back.setVisibility(View.VISIBLE);
                         mAdapter.notifyDataSetChanged();
                     }
                 });
@@ -115,7 +118,18 @@ public class SearchActivity extends AppCompatActivity {
             }
 
 
-        });}
+        });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
+                intent.putExtra(TOKEN,Token);
+                startActivity(intent);
+            }
+
+
+        });
+    }
 
 
 

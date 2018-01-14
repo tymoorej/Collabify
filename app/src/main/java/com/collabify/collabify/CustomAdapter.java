@@ -51,9 +51,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
         holder.up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Song currentTop = mItems.get(0);
                 Integer v = mItems.get(holder.getAdapterPosition()).getVotes()+1;
                 mItems.get(holder.getAdapterPosition()).setVotes(v);
                 Collections.sort(mItems, new VoteComparator());
+                if(mItems.get(0)!= currentTop)  {
+                    
+                }
                 notifyDataSetChanged();
             }
         });
