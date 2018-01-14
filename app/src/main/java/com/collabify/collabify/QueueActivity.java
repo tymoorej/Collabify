@@ -129,6 +129,11 @@ public class QueueActivity extends AppCompatActivity implements
             }
         });
         playButton = (ImageButton)findViewById(R.id.playButton);
+
+        Button addSong = (Button)findViewById(R.id.addSong);
+        refreshButton = (Button)findViewById(R.id.refreshButton);
+        skipButton = findViewById(R.id.skip_button);
+
         if(mPlayer.getPlaybackState().isPlaying){
             TextView title = findViewById(R.id.textView4);
             TextView artist = findViewById(R.id.textView5);
@@ -159,7 +164,6 @@ public class QueueActivity extends AppCompatActivity implements
             ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
             roomID.setText(ID);
         }
-        Button addSong = (Button)findViewById(R.id.addSong);
         refreshButton = (Button)findViewById(R.id.refreshButton);
         skipButton = findViewById(R.id.skip_button);
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
@@ -216,7 +220,7 @@ public class QueueActivity extends AppCompatActivity implements
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("Fuck", String.valueOf(mPlayer.getPlaybackState().isPlaying));
+                Log.d("PlayButton", String.valueOf(mPlayer.getPlaybackState().isPlaying));
                 if(mPlayer.getPlaybackState().isPlaying){
                     playButton.setImageResource(android.R.drawable.ic_media_play);
                     mPlayer.pause(mOperationCallback);
@@ -233,7 +237,6 @@ public class QueueActivity extends AppCompatActivity implements
                        mPlayer.skipToNext(mOperationCallback);
                     }
                 }
-
             }
         });
 
