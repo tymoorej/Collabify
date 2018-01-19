@@ -40,17 +40,20 @@ public class SearchActivity extends AppCompatActivity {
     //public static String LIST_SONGS = "com.collabify.collabify.fuqdupshizza";
     private EditText searchText;
     private List<Track> tracks;
-    private String Token;
     //public static String ADDED_SONG = "com.collabify.collabify.fuqdupshizza";
-    public static String TOKEN = "com.collabify.collabify.TOKEN";
-    public static String USER = "comn.collabify.collabify.USER";
-    public static String ROOM_NAME = "com.collabify.collabify.MESSAGE";
+    public static final String TOKEN = "com.collabify.collabify.TOKEN";
+    public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
+    public static final String USER = "com.collabify.collabify.USER";
+    public static final String IS_HOST = "com.collabify.collabify.HOST";
     public Room currentRoom;
     public Database data;
+    public String Token;
     public String uID;
     public String RID;
-    ArrayList<User> users=new ArrayList<>();
-    ArrayList<Room> rooms=new ArrayList<>();
+    public boolean isHost;
+    public ArrayList<User> users=new ArrayList<>();
+    public ArrayList<Room> rooms=new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         data = new Database(this);
@@ -63,11 +66,13 @@ public class SearchActivity extends AppCompatActivity {
         //final String listOfSongs = intent.getStringExtra(SearchActivity.LIST_SONGS);
         //String ID = intent.getStringExtra(EnterIDActivity.EXTRA_MESSAGE);
 
-        Token = intent.getStringExtra(TOKEN);
+        Token = intent.getStringExtra(QueueActivity.TOKEN);
         uID = intent.getStringExtra(USER);
-        RID = intent.getStringExtra(ROOM_NAME);
-        currentRoom = Room.getRoomFromID(RID,rooms);
-        Log.d("SearchActivity", "onCreate: "+currentRoom);
+        RID = intent.getStringExtra(QueueActivity.ROOM_NAME);
+        isHost = intent.getBooleanExtra(QueueActivity.IS_HOST,false);
+        Log.d("SearchActivity:", "onCreate Intents: " + Token+"\n " + uID + "\n "+RID);
+
+
         search = (Button) findViewById(R.id.searchButton);
         searchText = (EditText) findViewById(R.id.searchText);
         listOfSongs = (ListView)findViewById(R.id.listView);
@@ -89,6 +94,10 @@ public class SearchActivity extends AppCompatActivity {
                String uri = song.getUri();
                String imageURL = song.getImageURL();
                String[] values = {title, artist, uri, imageURL};
+
+               currentRoom = Room.getRoomFromID(RID,rooms);
+               Log.d("SearchActivity", "onCreate: "+currentRoom);
+
                Song addedSong = song;
                data.addSong(currentRoom, addedSong);
                QueueActivity.mItems.add(song);
@@ -97,6 +106,7 @@ public class SearchActivity extends AppCompatActivity {
                intent.putExtra(TOKEN,Token);
                intent.putExtra(USER, uID);
                intent.putExtra(ROOM_NAME, RID);
+               intent.putExtra(QueueActivity.IS_HOST, isHost);
                startActivity(intent);
             }
         });

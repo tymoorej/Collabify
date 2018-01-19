@@ -72,8 +72,9 @@ public class Room {
 
     static public Room getRoomFromID(String roomID, ArrayList<Room> rooms){
         for(Room r: rooms){
-            Log.d("ROOM.java", "getRoomFromID: "+r.toString());
+            Log.d("ROOM.java", "getRoomFromID: "+ roomID +" "+r.toString());
             if(r.getRoomID().equals(roomID)){
+                Log.d("ROOM.java", "getRoomFromID - This one: "+r.toString());
                 return r;
             }
         }

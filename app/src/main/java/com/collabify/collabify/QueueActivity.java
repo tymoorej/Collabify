@@ -49,6 +49,7 @@ public class QueueActivity extends AppCompatActivity implements
     private boolean isPlaying;
     private ImageButton playButton;
     private ImageButton skipButton;
+    private Button addSong;
     private ArrayList<? extends Song> SongList;
     private Button refreshButton;
     public ArrayList<User> users=new ArrayList<>();
@@ -58,12 +59,18 @@ public class QueueActivity extends AppCompatActivity implements
     public TextView roomID;
     public String roomIDText;
     public Room currentRoom = new Room();
+    public String userID;
+    public String ID;
+    public String Token;
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
-    public static final String RID = "com.collabify.collabify.RID";
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static final String USER = "com.collabify.collabify.USER";
+    public static final String IS_HOST = "com.collabify.collabify.HOST";
     public static Song nowPlaying;
     public static User u = new User();
+
+
+
     private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
         @Override
         public void onSuccess() {
@@ -93,13 +100,14 @@ public class QueueActivity extends AppCompatActivity implements
 //        data.searchUser(intent.getStringExtra(USER),users);
 //        Log.d("Queue", "onCreate: "+ users.size());
 
-        String userID = intent.getStringExtra(USER);
-        String ID = intent.getStringExtra(ROOM_NAME);
-        String Token = intent.getStringExtra(TOKEN);
+        userID = intent.getStringExtra(USER);
+        ID = intent.getStringExtra(ROOM_NAME);
+        Token = intent.getStringExtra(TOKEN);
 
-        final String t = Token;
-        final String uID = userID;
-        final String rID = ID;
+
+
+        Log.d("QueueActivity", "onCreate Intents: " + Token +"\n " + ID + "\n "+ userID);
+
 
         //String Token = intent.getStringExtra(HostAndJoinActivity.TOKEN);
         /*
@@ -118,12 +126,12 @@ public class QueueActivity extends AppCompatActivity implements
 
             @Override
             public void onError(Throwable throwable) {
-                Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
+                Log.e("QueueActivity", "Could not initialize player: " + throwable.getMessage());
             }
         });
 
         playButton = (ImageButton)findViewById(R.id.playButton);
-        Button addSong = (Button)findViewById(R.id.addSong);
+        addSong = (Button)findViewById(R.id.addSong);
         refreshButton = (Button)findViewById(R.id.refreshButton);
         skipButton = findViewById(R.id.skip_button);
 
@@ -149,8 +157,8 @@ public class QueueActivity extends AppCompatActivity implements
             playButton.setImageResource(android.R.drawable.ic_media_play);
         }
         final TextView roomID = findViewById(R.id.RoomID);
-        isHost = intent.getBooleanExtra(HostAndJoinActivity.IS_HOST, false);
-        Log.d("HOST", "is host? "+isHost);
+        isHost = intent.getBooleanExtra(IS_HOST, false);
+        Log.d("QueueHOST", "is host? "+isHost);
         roomID.setText(ID);
 
         if(isHost){
@@ -173,8 +181,8 @@ public class QueueActivity extends AppCompatActivity implements
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentRoom = Room.getRoomFromID(rID, rooms);
-                u = User.getUserFromID(uID, users);
+                currentRoom = Room.getRoomFromID(ID, rooms);
+                u = User.getUserFromID(userID, users);
                 Log.d("QueueActivityRefresh", "onClick: "+currentRoom+" "+u);
 //                data.searchUser(userID,u);data.searchRoom(ID,currentRoom);
                 Log.d("refresh button", currentRoom.toString());
@@ -206,11 +214,12 @@ public class QueueActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                intent.putExtra(TOKEN, t);
-                intent.putExtra(RID, rID);
-                intent.putExtra(USER, uID);
-                Log.d("Queue to search", "onClick: "+uID);
-                intent.putExtra(HostAndJoinActivity.IS_HOST, isHost);
+                Log.d("QueueActivity", "addSong Intents: " + Token +"\n " + userID + "\n "+ ID);
+                intent.putExtra(TOKEN, Token);
+                intent.putExtra(ROOM_NAME, ID);
+                intent.putExtra(USER, userID);
+                intent.putExtra(IS_HOST, isHost);
+
                 startActivity(intent);
                 //mItems.add(new RecyclerViewClass("title", " artist", 0, mUris.remove(mUris.size() - 1)));
                 //mAdapter.notifyDataSetChanged();
@@ -283,32 +292,32 @@ public class QueueActivity extends AppCompatActivity implements
 
     @Override
     public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
+        Log.d("QueueActivity", "User logged in");
     }
 
     @Override
     public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
+        Log.d("QueueActivity", "User logged out");
     }
 
     @Override
     public void onLoginFailed(Error var1) {
-        Log.d("MainActivity", "Login failed");
+        Log.d("QueueActivity", "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
+        Log.d("QueueActivity", "Temporary error occurred");
     }
 
     @Override
     public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
+        Log.d("QueueActivity", "Received connection message: " + message);
     }
 
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d("MainActivity", "Playback event received: " + playerEvent.name());
+        Log.d("QueueActivity", "Playback event received: " + playerEvent.name());
         switch (playerEvent) {
             // Handle event type as necessary
             default:
@@ -318,7 +327,7 @@ public class QueueActivity extends AppCompatActivity implements
 
     @Override
     public void onPlaybackError(Error error) {
-        Log.d("MainActivity", "Playback error received: " + error.name());
+        Log.d("QueueActivity", "Playback error received: " + error.name());
         switch (error) {
             // Handle error type as necessary
             default:
