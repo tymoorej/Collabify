@@ -6,43 +6,77 @@
     android:layout_height="match_parent"
     tools:context="com.collabify.collabify.HostAndJoinActivity">
 
-    <Button
-        android:id="@+id/host"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_button"
-        android:onClick="hostPress"
-        android:text="Start a new playlist"
-        app:layout_constraintBottom_toTopOf="@+id/join"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
-
-    <Button
-        android:id="@+id/join"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="180dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_button"
-        android:onClick="joinPress"
-        android:text="Collab on an existing playlist"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/host" />
-
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="437dp"
         android:layout_height="134dp"
-        app:layout_constraintBottom_toTopOf="@+id/host"
+        app:layout_constraintBottom_toTopOf="@id/join"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/header" />
+
+    <Button
+        android:id="@+id/join"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="joinPress"
+        android:text="Collab on an existing playlist"
+        app:layout_constraintBottom_toTopOf="@id/host"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageView4" />
+
+    <Button
+        android:id="@+id/host"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="180dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="hostPress"
+        android:text="Start a new playlist"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/join" />
+
+
+    <EditText
+        android:id="@+id/newRoomText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Name your new room"
+        android:inputType="text|textPersonName"
+
+
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/newRoomButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/host" />
+
+    <Button
+        android:id="@+id/newRoomButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/rounded_button"
+        android:text="Create"
+        android:visibility="invisible"
+        app:layout_constraintBaseline_toBaselineOf="@+id/newRoomText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newRoomText"
+        app:layout_constraintTop_toBottomOf="@id/host" />
+
 </android.support.constraint.ConstraintLayout>
 

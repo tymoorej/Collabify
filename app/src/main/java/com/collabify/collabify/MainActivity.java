@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity implements
     // Private Attributes
     private Player mPlayer;
 
-    private Button logIn;
+    private Button logInFree;
+    private Button logInPremium;
     private static final String CLIENT_ID = "2cd5102aa3354e2895257802f830566c";
     private static final String REDIRECT_URI = "collabcallback://callback";
     // Request code that will be used to verify if the result comes from correct activity
@@ -97,24 +98,38 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_login);
 
 
-        logIn = findViewById(R.id.button_logIn);
+        logInFree = (Button) findViewById(R.id.button_logIn);
+        logInPremium = (Button) findViewById(R.id.button_logIn2);
+        Log.d("MainAct", "onCreate: "+logInFree + " "+ logInPremium);
 
-        logIn.setOnClickListener(new View.OnClickListener() {
+        logInFree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Login...",
                         Toast.LENGTH_SHORT).show();
 
-                openLoginWindow();
+                openLoginWindow(new String[]{"user-read-private", "playlist-read", "playlist-read-private"});
+                //logIn();
+            }
+
+        });
+
+        logInPremium.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Login...",
+                        Toast.LENGTH_SHORT).show();
+
+                openLoginWindow(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"});
                 //logIn();
             }
 
         });
     }
 
-    private void openLoginWindow() {
+    private void openLoginWindow(String[] scope) {
         final AuthenticationRequest request = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI)
-                .setScopes(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"})
+                .setScopes(scope)
                 .build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);

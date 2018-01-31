@@ -40,6 +40,14 @@ public class Database {
         }
     }
 
+    public void updateChild(Class type, String childID, Object newVal) {
+        if (type.equals(User.class)) {
+            userRef.child(childID).setValue((User)newVal);
+        } else if (type.equals(Room.class)) {
+            roomRef.child(childID).setValue((Room)newVal);
+        }
+    }
+
 
     public String addUser(User u, boolean isHost){
         try {
@@ -55,24 +63,8 @@ public class Database {
             return u.getUserID();
         }
     }
-    //TODO: FINISH
-    public void updateUser (User u) {
-        Query citiesQuery = userRef.orderByKey().equalTo(u.getUserID());
-        citiesQuery.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                System.out.println(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
+    //TODO: Look into user names for rooms
     public String addRoom(Room r){
         String roomID = "";
         try {

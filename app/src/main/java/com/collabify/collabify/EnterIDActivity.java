@@ -44,17 +44,21 @@ public class EnterIDActivity extends AppCompatActivity {
 
     public void joinRoom(View view){
         Intent intent = new Intent(this, QueueActivity.class);
-        EditText roomID = (EditText) findViewById(R.id.enterID);
-        String message = roomID.getText().toString();
+        EditText roomText = (EditText) findViewById(R.id.enterID);
+        String roomID = roomText.getText().toString();
         u = User.getUserFromID(userID, users);
+        u.setUserRoom(roomID);
 
 
 
-        if (Room.getRoomFromID(message, rooms) != null && u != null) {
-            intent.putExtra(ROOM_NAME, message);
+        if (Room.getRoomFromID(roomID, rooms) != null && u != null) {
+
+            d.updateChild(u.getClass(), userID, u);
+
+            intent.putExtra(ROOM_NAME, roomID);
             intent.putExtra(USER,u.getUserID());
             intent.putExtra(TOKEN,Token);
-            Log.d("enterIDact", "joinRoom: "+message+ " " + u.getUserID());
+            Log.d("enterIDact", "joinRoom: "+roomID+ " " + u.getUserID());
             startActivity(intent);
         }
         else {
