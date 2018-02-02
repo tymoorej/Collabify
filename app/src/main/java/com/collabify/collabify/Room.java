@@ -56,7 +56,7 @@ public class Room {
     public String getRoomHost() {
         return this.hostID;
     }
-    public ArrayList<Song> getRoomSongs() {
+    public ArrayList<Song> getSongs() {
         return this.songs;
     }
 

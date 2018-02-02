@@ -53,16 +53,16 @@ public class EnterIDActivity extends AppCompatActivity {
 
         if (Room.getRoomFromID(roomID, rooms) != null && u != null) {
 
-            d.updateChild(u.getClass(), userID, u);
+                d.updateChild(u.getClass(), userID, u);
 
-            intent.putExtra(ROOM_NAME, roomID);
-            intent.putExtra(USER,u.getUserID());
-            intent.putExtra(TOKEN,Token);
-            Log.d("enterIDact", "joinRoom: "+roomID+ " " + u.getUserID());
-            startActivity(intent);
-        }
+                intent.putExtra(ROOM_NAME, roomID);
+                intent.putExtra(USER,u.getUserID());
+                intent.putExtra(TOKEN,Token);
+                Log.d("enterIDact", "joinRoom: "+roomID+ " " + u.getUserID());
+                startActivity(intent);
+            }
         else {
-            Toast.makeText(getApplicationContext(), "Invalid Room name...",
+                Toast.makeText(getApplicationContext(), "Invalid Room name...",
                     Toast.LENGTH_SHORT).show();
         }
 

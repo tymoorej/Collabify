@@ -22,6 +22,7 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -96,11 +97,18 @@ public class SearchActivity extends AppCompatActivity {
                String[] values = {title, artist, uri, imageURL};
 
                currentRoom = Room.getRoomFromID(RID,rooms);
-               Log.d("SearchActivity", "onCreate: "+currentRoom);
+               Log.d("SearchActivity", "onCreate: "+currentRoom + " " + song.getTitle());
 
-               Song addedSong = song;
-               data.addSong(currentRoom, addedSong);
+               if (currentRoom.getSongs() == null) {
+                   currentRoom.setRoomSongs(new ArrayList<Song>(
+                           Arrays.asList(song)));
+               } else {
+                   currentRoom.addRoomSong(song);
+               }
+
+               data.updateChild(currentRoom.getClass(), currentRoom.getRoomID(), currentRoom );
                QueueActivity.mItems.add(song);
+
                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
                //intent.putExtra(ADDED_SONG, values);
                intent.putExtra(TOKEN,Token);
@@ -118,20 +126,23 @@ public class SearchActivity extends AppCompatActivity {
                // mItems.add(new RecyclerViewClass("Title", "Artist", 0, "uri"));
                 //mAdapter.notifyDataSetChanged();
                 String trackToSearch = searchText.getText().toString();
-                Network network =new Network(new AsyncResponse() {
-                    @Override
-                    public void processFinish(Object output) {
-                        ArrayList<Song> searchedSongs = (ArrayList<Song>)output;
-                        ListView l = (ListView)findViewById(R.id.listView);
-                        l.setAdapter(new MyAdapter(getApplicationContext(), searchedSongs));
-                        search.setVisibility(View.INVISIBLE);
-                        searchText.setVisibility(View.INVISIBLE);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
-                network.execute(Token, trackToSearch);
-                //mAdapter.notifyDataSetChanged();
-                //getResults(network);
+                if (trackToSearch.length() != 0){
+                    Network network =new Network(new AsyncResponse() {
+                        @Override
+                        public void processFinish(Object output) {
+                            ArrayList<Song> searchedSongs = (ArrayList<Song>)output;
+                            ListView l = (ListView)findViewById(R.id.listView);
+
+                            l.setAdapter(new MyAdapter(getApplicationContext(), searchedSongs));
+                            search.setVisibility(View.INVISIBLE);
+                            searchText.setVisibility(View.INVISIBLE);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    network.execute(Token, trackToSearch);
+                    //mAdapter.notifyDataSetChanged();
+                    //getResults(network);
+                }
             }
 
 

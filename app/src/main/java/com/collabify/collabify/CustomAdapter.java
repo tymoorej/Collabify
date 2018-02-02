@@ -26,9 +26,12 @@ import java.util.List;
  */
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecyclerViewHolder> {
+    public static final String TAG = "Queue:CustomAdapter";
     List<Song> mItems;
     Context mContext;
     User u = QueueActivity.u;
+    Room r = QueueActivity.currentRoom;
+
     Set<Song> votedSongs= new HashSet<>();
 
 
@@ -45,7 +48,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
         //set the margin if any, will be discussed in next blog
         return new CustomRecyclerViewHolder(v);
     }
-
+    //TODO:Make it so that you can only vote once
     @Override
     public void onBindViewHolder(final CustomRecyclerViewHolder holder, int position) {
         //holder.artwork.setImageDrawable(mItems.get(position).getArtwork());
@@ -61,6 +64,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
                 Integer v = mItems.get(holder.getAdapterPosition()).getVotes()+1;
                 mItems.get(holder.getAdapterPosition()).setVotes(v);
                 Collections.sort(mItems, new VoteComparator());
+                Log.d(TAG, "onUpClick: "+u + r);
                 notifyDataSetChanged();
             }
         });

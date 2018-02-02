@@ -12,7 +12,7 @@ public class User {
     // FIELDS
     public String userID;
     public boolean isHost;
-    public String roomID;
+    public String userRoom;
     public String name;
 
     // CONSTRUCTORS
@@ -20,10 +20,10 @@ public class User {
     public User(){
 
     }
-    public User(String userID, String name, boolean isHost, String roomID){
+    public User(String userID, String name, boolean isHost, String userRoom){
         this.userID=userID;
         this.isHost=isHost;
-        this.roomID=roomID;
+        this.userRoom=userRoom;
         this.name=name;
     }
 
@@ -37,8 +37,8 @@ public class User {
     public void setIsHost(boolean isHost) {
         this.isHost = isHost;
     }
-    public void setUserRoom(String roomID) {
-        this.roomID = roomID;
+    public void setUserRoom(String userRoom) {
+        this.userRoom = userRoom;
     }
 
     // GETTERS
@@ -52,7 +52,7 @@ public class User {
         return this.isHost;
     }
     public String getUserRoom() {
-        return this.roomID;
+        return this.userRoom;
     }
 
 
@@ -64,7 +64,7 @@ public class User {
                 "userID='" + userID + '\'' +
                 ", name='" + name + '\'' +
                 ", isHost=" + isHost + '\'' +
-                ", roomID=" + roomID + '\'' +
+                ", roomID=" + userRoom + '\'' +
                 '}';
     }
 

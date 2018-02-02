@@ -13,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -38,6 +39,11 @@ public class Database {
         catch(Exception e){
             Log.d("Database ERROR",e.getMessage());
         }
+    }
+
+    public void clearDatabase() {
+         this.userRef.removeValue();
+         this.roomRef.removeValue();
     }
 
     public void updateChild(Class type, String childID, Object newVal) {
@@ -71,25 +77,32 @@ public class Database {
             DatabaseReference newRef = roomRef.push();
             roomID = newRef.getKey();
             r.setRoomID(roomID);
-            r.setRoomSongs(new ArrayList<Song>());
+            //r.setRoomSongs(new ArrayList<Song>(Arrays.asList(tempSong(), tempSong(), tempSong())));
+            newRef.setValue(r);
+    }
+        catch(Exception e){
+            Log.d("Room ERROR",e.getMessage());
+        }
+        finally {
+            return r.getRoomID();
+        }
+    }
+
+    public String addRoomWithName(Room r, String name){
+        try {
+            DatabaseReference newRef = roomRef.child(name);
+            r.setRoomID(name);
+            //r.setRoomSongs(new ArrayList<Song>(Arrays.asList(tempSong(), tempSong(), tempSong())));
             newRef.setValue(r);
         }
         catch(Exception e){
             Log.d("Room ERROR",e.getMessage());
         }
         finally {
-            return roomID;
+            return r.getRoomID();
         }
     }
 
-    public void addSong(Room r, Song song){
-        try {
-            r.addRoomSong(song);
-        }
-        catch(Exception e){
-            Log.d("Song ERROR",e.getMessage());
-        }
-    }
     public void incrementVote(Room r, Song s){
         try {
             for (int i = 0; i < r.songs.size(); i++) {
@@ -235,7 +248,7 @@ public class Database {
                 Log.d("searchUser", "onDataChanged: " + dataSnapshot.toString());
                 r.setRoomHost(dataSnapshot.child(rID).getValue(Room.class).getRoomHost());
                 r.setRoomID(dataSnapshot.child(rID).getValue(Room.class).getRoomID());
-                r.setRoomSongs(dataSnapshot.child(rID).getValue(Room.class).getRoomSongs());
+                r.setRoomSongs(dataSnapshot.child(rID).getValue(Room.class).getSongs());
             }
 
             @Override

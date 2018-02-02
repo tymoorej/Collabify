@@ -50,6 +50,7 @@ public class QueueActivity extends AppCompatActivity implements
     private ImageButton playButton;
     private ImageButton skipButton;
     private Button addSong;
+    private Button toDelete;
     private ArrayList<? extends Song> SongList;
     private Button refreshButton;
     public ArrayList<User> users=new ArrayList<>();
@@ -58,10 +59,11 @@ public class QueueActivity extends AppCompatActivity implements
     public Database data;
     public TextView roomID;
     public String roomIDText;
-    public Room currentRoom = new Room();
+    public static Room currentRoom = new Room();
     public String userID;
     public String ID;
     public String Token;
+    public static final String TAG = "QueueActivity";
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static final String USER = "com.collabify.collabify.USER";
@@ -89,7 +91,7 @@ public class QueueActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_queue);
         data = new Database(this);
         data.readData(users, rooms);
-
+        Log.d(TAG, "onCreate: ");
 
         /* NOT NEEDED?
         roomID = (TextView)findViewById(R.id.RoomID);
@@ -134,6 +136,7 @@ public class QueueActivity extends AppCompatActivity implements
         addSong = (Button)findViewById(R.id.addSong);
         refreshButton = (Button)findViewById(R.id.refreshButton);
         skipButton = findViewById(R.id.skip_button);
+        toDelete = findViewById(R.id.toDeleteButton);
 
         if(isPlaying){
             TextView title = findViewById(R.id.textView4);
@@ -164,10 +167,28 @@ public class QueueActivity extends AppCompatActivity implements
         if(isHost){
             playButton.setVisibility(View.VISIBLE);
             skipButton.setVisibility(View.VISIBLE);
+            toDelete.setVisibility(View.VISIBLE);
         } else{
             playButton.setVisibility(View.INVISIBLE);
             skipButton.setVisibility(View.INVISIBLE);
+            toDelete.setVisibility(View.INVISIBLE);
         }
+
+        toDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ResetActivity.class);
+                Log.d("QueueActivity", "toDelete: " + Token +"\n " + userID + "\n "+ ID);
+                intent.putExtra(TOKEN, Token);
+                intent.putExtra(ROOM_NAME, ID);
+                intent.putExtra(USER, userID);
+                intent.putExtra(IS_HOST, isHost);
+
+                startActivity(intent);
+                //mItems.add(new RecyclerViewClass("title", " artist", 0, mUris.remove(mUris.size() - 1)));
+                //mAdapter.notifyDataSetChanged();
+            }
+        });
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         // use this setting to improve performance if you know that changes
@@ -177,7 +198,7 @@ public class QueueActivity extends AppCompatActivity implements
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        doClick();
+        //doClick();
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,14 +206,16 @@ public class QueueActivity extends AppCompatActivity implements
                 u = User.getUserFromID(userID, users);
                 Log.d("QueueActivityRefresh", "onClick: "+currentRoom+" "+u);
 //                data.searchUser(userID,u);data.searchRoom(ID,currentRoom);
-                Log.d("refresh button", currentRoom.toString());
-                Log.d("refresh button", u.toString());
-                songs = currentRoom.songs;
-                refreshButton.setVisibility(View.GONE);
-                mRecyclerView.setVisibility(View.VISIBLE);
+                if ((u != null) && (currentRoom != null)) {
+                    Log.d("refresh button", currentRoom.toString());
+                    Log.d("refresh button", u.toString());
+                    songs = currentRoom.songs;
+                    refreshButton.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                }
             }
         });
-        //doClick();
+        doClick();
         Log.d("read data", "onCreate: " + users.size() + "<- user, room -> " + rooms.size());
         /*if(mItems == null) {
             mItems = new ArrayList<>();

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -15,9 +16,10 @@ public class HostAndJoinActivity extends AppCompatActivity {
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String USER = "com.collabify.collabify.USER";
+    public static final String TAG = "HostAndJoinActivity";
 
     public Button CreateRoom;
-    public EditText RoomName;
+    public EditText RoomNameText;
 
 
     public ArrayList<User> users=new ArrayList<>();
@@ -29,7 +31,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_and_join);
         CreateRoom = findViewById(R.id.newRoomButton);
-        RoomName = findViewById(R.id.newRoomText);
+        RoomNameText = findViewById(R.id.newRoomText);
 
         Intent intent = getIntent();
         Token = intent.getStringExtra(TOKEN);
@@ -40,31 +42,41 @@ public class HostAndJoinActivity extends AppCompatActivity {
     //TODO: Look into user names for rooms
     public void hostPress(View view){
         CreateRoom.setVisibility(View.VISIBLE);
-        RoomName.setVisibility(View.VISIBLE);
+        RoomNameText.setVisibility(View.VISIBLE);
 
         CreateRoom.setOnClickListener(new View.OnClickListener() {
             //@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
             public void onClick(View view) {
-                String roomID = "";String uID="";
-                Room r = new Room();
-                roomID = d.addRoom(r);
-                User u = new User();
-                uID = d.addUser(u,true);
+                String roomName = RoomNameText.getText().toString().replaceAll(" ", "-").toLowerCase();
+                if ((roomName.length() != 0) && (Room.getRoomFromID(roomName, rooms) == null)){
+                    String roomID = "";String uID="";
+                    Room r = new Room();
+                    roomID = d.addRoomWithName(r, roomName);
+                    User u = new User();
+                    uID = d.addUser(u,true);
 
-                u.setUserRoom(roomID);
-                r.setRoomHost(uID);
-                d.updateChild(r.getClass(), roomID, r);
-                d.updateChild(u.getClass(), uID, u);
+                    u.setUserRoom(roomID);
+                    r.setRoomHost(uID);
+                    Log.d(TAG, "onClick: " + u + r);
+                    d.updateChild(r.getClass(), roomID, r);
+                    d.updateChild(u.getClass(), uID, u);
+
+                    Toast.makeText(getApplicationContext(), "You just created room: " + roomID,
+                            Toast.LENGTH_SHORT).show();
 
 
-                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
-                intent.putExtra(IS_HOST, true);
-                intent.putExtra(ROOM_NAME, roomID);
-                intent.putExtra(TOKEN, Token);
-                intent.putExtra(USER, uID);
-                Log.d("user", "hostPress: "+u.getUserID());
-                startActivity(intent);
+                    Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
+                    intent.putExtra(IS_HOST, true);
+                    intent.putExtra(ROOM_NAME, roomID);
+                    intent.putExtra(TOKEN, Token);
+                    intent.putExtra(USER, uID);
+                    Log.d("user", "hostPress: "+u.getUserID());
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(getApplicationContext(), "Invalid Room name...",
+                            Toast.LENGTH_SHORT).show();
+                }
                 }
         });
     }
@@ -79,6 +91,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EnterIDActivity.class);
         intent.putExtra(TOKEN, Token);
         intent.putExtra(USER, uID);
+        intent.putExtra(IS_HOST, false);
         startActivity(intent);
     }
 }
