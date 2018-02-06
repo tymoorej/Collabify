@@ -6,13 +6,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,6 +27,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -41,7 +48,8 @@ public class QueueActivity extends AppCompatActivity implements
     private SpotifyPlayer mPlayer;
 
     private RecyclerView mRecyclerView;
-    private CustomAdapter mAdapter;
+    //private CustomAdapter mAdapter;
+    private FirebaseRecyclerAdapter mAdapter;
     public static List<Song> mItems = new ArrayList<>();
     private List<String> mUris;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -50,13 +58,13 @@ public class QueueActivity extends AppCompatActivity implements
     private ImageButton playButton;
     private ImageButton skipButton;
     private Button addSong;
-    private Button toDelete;
+    private ImageButton toDelete;
     private ArrayList<? extends Song> SongList;
     private Button refreshButton;
     public ArrayList<User> users=new ArrayList<>();
     public ArrayList<Room> rooms=new ArrayList<>();
     public ArrayList<Song> songs;
-    public Database data;
+    public static Database data;
     public TextView roomID;
     public String roomIDText;
     public static Room currentRoom = new Room();
@@ -93,14 +101,7 @@ public class QueueActivity extends AppCompatActivity implements
         data.readData(users, rooms);
         Log.d(TAG, "onCreate: ");
 
-        /* NOT NEEDED?
-        roomID = (TextView)findViewById(R.id.RoomID);
-        roomIDText = roomID.getText().toString();
-        currentRoom = Room.getRoomFromID(roomIDText, rooms);
-        */
         Intent intent = getIntent();
-//        data.searchUser(intent.getStringExtra(USER),users);
-//        Log.d("Queue", "onCreate: "+ users.size());
 
         userID = intent.getStringExtra(USER);
         ID = intent.getStringExtra(ROOM_NAME);
@@ -108,14 +109,10 @@ public class QueueActivity extends AppCompatActivity implements
 
 
 
+
+
         Log.d("QueueActivity", "onCreate Intents: " + Token +"\n " + ID + "\n "+ userID);
 
-
-        //String Token = intent.getStringExtra(HostAndJoinActivity.TOKEN);
-        /*
-        if(Token==null){
-            Token = intent.getStringExtra(SearchActivity.TOKEN);
-        }*/
 
         Config playerConfig = new Config(this, Token, MainActivity.getClientId());
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
@@ -135,8 +132,8 @@ public class QueueActivity extends AppCompatActivity implements
         playButton = (ImageButton)findViewById(R.id.playButton);
         addSong = (Button)findViewById(R.id.addSong);
         refreshButton = (Button)findViewById(R.id.refreshButton);
-        skipButton = findViewById(R.id.skip_button);
-        toDelete = findViewById(R.id.toDeleteButton);
+        skipButton = (ImageButton)findViewById(R.id.skip_button);
+        toDelete = (ImageButton)findViewById(R.id.toDeleteButton);
 
         if(isPlaying){
             TextView title = findViewById(R.id.textView4);
@@ -190,6 +187,70 @@ public class QueueActivity extends AppCompatActivity implements
             }
         });
 
+        // TEST FIREBASE UI STUFFS
+
+        Query songQuery = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("Rooms")
+                .child(ID)
+                .child("songs");
+
+        FirebaseRecyclerOptions<Song> options =
+                new FirebaseRecyclerOptions.Builder<Song>()
+                        .setQuery(songQuery, Song.class)
+                        .build();
+
+         mAdapter = new FirebaseRecyclerAdapter<Song, CustomRecyclerViewHolder>(options) {
+
+            @Override
+            public CustomRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                // create a new view
+                View v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.layout, parent, false);
+                //set the margin if any, will be discussed in next blog
+                return new CustomRecyclerViewHolder(v);
+            }
+
+
+            //TODO:Make it so that you can only vote once
+
+            @Override
+            protected void onBindViewHolder(final @NonNull com.collabify.collabify.CustomRecyclerViewHolder holder, int position, @NonNull Song model) {
+                //holder.artwork.setImageDrawable(mItems.get(position).getArtwork());
+                holder.getTitle().setText(model.getTitle());
+                holder.getArtist().setText(model.getArtist());
+                holder.getVotes().setText(""+model.getVotes());
+                new DownloadImageTask(holder.getArtwork()).execute(model.getImageURL());
+
+
+                holder.getUp().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d("UpClick", "onClick: "+holder);
+                        Integer v = mItems.get(holder.getAdapterPosition()).getVotes()+1;
+                        mItems.get(holder.getAdapterPosition()).setVotes(v);
+                        Collections.sort(mItems, new VoteComparator());
+                        data.updateRoom(mItems, currentRoom);
+                        notifyDataSetChanged();
+                    }
+                });
+
+                holder.getDown().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d("DownClick", "onClick: "+holder);
+                        Integer v = mItems.get(holder.getAdapterPosition()).getVotes()-1;
+                        mItems.get(holder.getAdapterPosition()).setVotes(v);
+                        Collections.sort(mItems, new VoteComparator());
+                        data.updateRoom(mItems, currentRoom);
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        };
+
+
+
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -217,20 +278,9 @@ public class QueueActivity extends AppCompatActivity implements
         });
         doClick();
         Log.d("read data", "onCreate: " + users.size() + "<- user, room -> " + rooms.size());
-        /*if(mItems == null) {
-            mItems = new ArrayList<>();
-        }
-        //adding test items to the list
-        String[] songJustAdded = intent.getStringArrayExtra(SearchActivity.ADDED_SONG);
-        if(songJustAdded != null) {
-            if(songJustAdded.length != 0) {
-                mItems.add(new RecyclerViewClass(songJustAdded[1], songJustAdded[0], 0, songJustAdded[2], songJustAdded[3]));
-            }
-        }*/
-        mAdapter = new CustomAdapter(this, mItems);
+
+        //mAdapter = new CustomAdapter(this, mItems);
         mRecyclerView.setAdapter(mAdapter);
-        mUris = new ArrayList<String>();
-        Collections.addAll(mUris, new String[]{"spotify:track:5PX4uS1LqlWEPL69phPVQQ", "spotify:track:1yKabXYK0QxNwgCeEJkREV", "spotify:track:2TpxZ7JUBn3uw46aR7qd6V"});
         mAdapter.notifyDataSetChanged();
 
         addSong.setOnClickListener(new View.OnClickListener() {
@@ -276,6 +326,7 @@ public class QueueActivity extends AppCompatActivity implements
                         new DownloadImageTask(image).execute(mItems.get(0).getImageURL());
                         nowPlaying = mItems.get(0);
                         mItems.remove(0);
+                        data.updateRoom(mItems, currentRoom);
                         mAdapter.notifyDataSetChanged();
                         mRecyclerView.setAdapter(mAdapter);
                     }
@@ -299,14 +350,27 @@ public class QueueActivity extends AppCompatActivity implements
                     new DownloadImageTask(image).execute(mItems.get(0).getImageURL());
                     nowPlaying = mItems.get(0);
                     mItems.remove(0);
+                    data.updateRoom(mItems, currentRoom);
                     mAdapter.notifyDataSetChanged();
                     mRecyclerView.setAdapter(mAdapter);
                 }
             }
         });
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        data.readData(users, rooms);
+        doClick();
+        mAdapter.startListening();
 
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdapter.stopListening();
     }
 
     public void doClick(){

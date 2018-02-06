@@ -18,6 +18,7 @@ public class ResetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reset);
         d = new Database(getApplicationContext());
 
+
         deleteButton = findViewById(R.id.deleteButton);
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -27,4 +28,5 @@ public class ResetActivity extends AppCompatActivity {
             }
         });
     }
+
 }

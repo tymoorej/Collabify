@@ -16,10 +16,13 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
+
+import retrofit.RestAdapter;
 
 /**
  * Created by gillianpierce on 2017-11-18.
@@ -29,6 +32,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
     public static final String TAG = "Queue:CustomAdapter";
     List<Song> mItems;
     Context mContext;
+
+    public Database d = QueueActivity.data;
     User u = QueueActivity.u;
     Room r = QueueActivity.currentRoom;
 
@@ -56,6 +61,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
         holder.artist.setText(mItems.get(position).getArtist());
         holder.votes.setText(""+mItems.get(position).getVotes());
         new DownloadImageTask(holder.artwork).execute(mItems.get(position).getImageURL());
+        Log.d(TAG, "onDownClick: "+u + r);
+
 
         holder.up.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +71,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
                 Integer v = mItems.get(holder.getAdapterPosition()).getVotes()+1;
                 mItems.get(holder.getAdapterPosition()).setVotes(v);
                 Collections.sort(mItems, new VoteComparator());
+
                 Log.d(TAG, "onUpClick: "+u + r);
                 notifyDataSetChanged();
             }
@@ -76,6 +84,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
                 Integer v = mItems.get(holder.getAdapterPosition()).getVotes()-1;
                 mItems.get(holder.getAdapterPosition()).setVotes(v);
                 Collections.sort(mItems, new VoteComparator());
+
+                Log.d(TAG, "onDownClick: "+u + r);
                 notifyDataSetChanged();
             }
         });
@@ -85,6 +95,15 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomRecy
     @Override
     public int getItemCount() {
         return mItems.size();
+    }
+
+    public List<Song> updateSongList(List<Song> mItems) {
+        List<Song> songs = r.getSongs();
+
+        songs = mItems;
+        d.updateChild(r.getClass(), r.getRoomID(), r);
+
+        return songs;
     }
 
     public class CustomRecyclerViewHolder extends RecyclerView.ViewHolder {

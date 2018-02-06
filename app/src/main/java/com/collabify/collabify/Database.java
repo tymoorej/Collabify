@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -39,6 +40,13 @@ public class Database {
         catch(Exception e){
             Log.d("Database ERROR",e.getMessage());
         }
+    }
+
+    public void updateRoom(List<Song> songs, Room currentRoom) {
+        ArrayList<Song> mItems = new ArrayList<>();
+        mItems.addAll(songs);
+        currentRoom.setRoomSongs(mItems);
+        this.updateChild(Room.class, currentRoom.getRoomID(), currentRoom);
     }
 
     public void clearDatabase() {
@@ -153,7 +161,7 @@ public class Database {
                 case ("artist"):
                     s.setArtist(postSnapshot.getValue(String.class));
                 case ("artwork"):
-                    s.setArtwork(postSnapshot.getValue(String.class));
+                    s.setImageURL(postSnapshot.getValue(String.class));
                 case ("positionInMs"):
                     s.setPositionInMs(postSnapshot.getValue(Integer.class));
                 case ("uri"):

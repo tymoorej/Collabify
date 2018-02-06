@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Song {
     private String title, artist;
-    private String artwork;
+    private String imageURL;
     private Integer votes;
     private String uri;
     private Integer positionInMs;
@@ -19,10 +19,10 @@ public class Song {
 
     }
 
-    public Song(String title, String artist, Integer votes, String uri, String artwork, Integer positionInMs){
+    public Song(String title, String artist, Integer votes, String uri, String imageURL, Integer positionInMs){
         this.title = title;
         this.artist = artist;
-        this.artwork = artwork;
+        this.imageURL = imageURL;
         this.votes = votes;
         this.uri = uri;
         this.positionInMs = positionInMs;
@@ -36,8 +36,8 @@ public class Song {
     public void setArtist(String artist){
         this.artist = artist;
     }
-    public void setArtwork(String artwork){
-        this.artwork = artwork;
+    public void setImageURL(String imageURL){
+        this.imageURL = imageURL;
     }
     public void setVotes(Integer votes){
         this.votes = votes;
@@ -63,7 +63,7 @@ public class Song {
         return uri;
     }
     public String getImageURL(){
-        return artwork;
+        return imageURL;
     }
     public Integer getPositionInMs() {
         return positionInMs;

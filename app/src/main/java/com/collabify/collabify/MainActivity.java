@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements
         logInPremium.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Login...",
+                Toast.makeText(getApplicationContext(), "Login Premium...",
                         Toast.LENGTH_SHORT).show();
 
                 openLoginWindow(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"});
