@@ -35,7 +35,7 @@ public class Room {
     public void setRoomName(String roomName) {
         this.roomName = roomName;
     }
-    public void setRoomHost(String hostID) {
+    public void setHostID(String hostID) {
         this.hostID = hostID;
     }
     public void setRoomSongs(ArrayList<Song> songs) {
@@ -53,7 +53,7 @@ public class Room {
     public String getRoomName() {
         return this.roomName;
     }
-    public String getRoomHost() {
+    public String getHostID() {
         return this.hostID;
     }
     public ArrayList<Song> getSongs() {

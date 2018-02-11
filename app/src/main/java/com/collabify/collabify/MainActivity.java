@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private BroadcastReceiver mNetworkStateReceiver;
 
+    private boolean isPremium = false;
+
     /**
      * Used to log messages to a {@link android.widget.TextView} in this activity.
      */
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Login...",
                         Toast.LENGTH_SHORT).show();
+                isPremium = false;
 
                 openLoginWindow(new String[]{"user-read-private", "playlist-read", "playlist-read-private"});
                 //logIn();
@@ -119,6 +122,8 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Login Premium...",
                         Toast.LENGTH_SHORT).show();
+
+                isPremium = true;
 
                 openLoginWindow(new String[]{"user-read-private", "playlist-read", "playlist-read-private", "streaming"});
                 //logIn();
@@ -199,10 +204,17 @@ public class MainActivity extends AppCompatActivity implements
     public void onLoggedIn() {
         Log.d("MainActivity", "User logged in");
         //mPlayer.playUri(null, "spotify:track:5syaaFva8b6Kgc1wiHkOFp", 0, 0);
-        Intent intent = new Intent(getApplicationContext(), HostAndJoinActivity.class);
-        Log.d("PLEASE", spotifyToken);
-        intent.putExtra(TOKEN, spotifyToken);
-        startActivity(intent);
+        if (isPremium) {
+            Intent intent = new Intent(getApplicationContext(), HostAndJoinActivity.class);
+            Log.d("TAG", "premLogin:"  +spotifyToken);
+            intent.putExtra(TOKEN, spotifyToken);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(getApplicationContext(), EnterIDActivity.class);
+            Log.d("TAG", "bummyLogin:"  + spotifyToken);
+            intent.putExtra(TOKEN, spotifyToken);
+            startActivity(intent);
+        }
     }
 
     @Override

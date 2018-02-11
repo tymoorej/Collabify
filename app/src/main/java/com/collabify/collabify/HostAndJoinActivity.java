@@ -57,7 +57,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
                     uID = d.addUser(u,true);
 
                     u.setUserRoom(roomID);
-                    r.setRoomHost(uID);
+                    r.setHostID(uID);
                     Log.d(TAG, "onClick: " + u + r);
                     d.updateChild(r.getClass(), roomID, r);
                     d.updateChild(u.getClass(), uID, u);

@@ -29,8 +29,11 @@ import java.util.List;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -54,7 +57,6 @@ public class QueueActivity extends AppCompatActivity implements
     private List<String> mUris;
     private RecyclerView.LayoutManager mLayoutManager;
     private boolean isHost;
-    private boolean isPlaying;
     private ImageButton playButton;
     private ImageButton skipButton;
     private Button addSong;
@@ -125,7 +127,7 @@ public class QueueActivity extends AppCompatActivity implements
 
             @Override
             public void onError(Throwable throwable) {
-                Log.e("QueueActivity", "Could not initialize player: " + throwable.getMessage());
+                Log.e(TAG, "Could not initialize player: " + throwable.getMessage());
             }
         });
 
@@ -135,14 +137,13 @@ public class QueueActivity extends AppCompatActivity implements
         skipButton = (ImageButton)findViewById(R.id.skip_button);
         toDelete = (ImageButton)findViewById(R.id.toDeleteButton);
 
-        if(isPlaying){
+        if (mPlayer.getPlaybackState().isPlaying){
             TextView title = findViewById(R.id.textView4);
             TextView artist = findViewById(R.id.textView5);
             ImageView image = findViewById(R.id.imageView);
             title.setText((CharSequence) nowPlaying.getTitle());
             artist.setText((CharSequence) nowPlaying.getArtist());
             new DownloadImageTask(image).execute(nowPlaying.getImageURL());
-            isPlaying = true;
             playButton.setImageResource(android.R.drawable.ic_media_pause);
         } else{
             if (nowPlaying != null) {
@@ -153,7 +154,6 @@ public class QueueActivity extends AppCompatActivity implements
                 artist.setText((CharSequence) nowPlaying.getArtist());
                 new DownloadImageTask(image).execute(nowPlaying.getImageURL());
             }
-            isPlaying = false;
             playButton.setImageResource(android.R.drawable.ic_media_play);
         }
         final TextView roomID = findViewById(R.id.RoomID);
@@ -211,7 +211,6 @@ public class QueueActivity extends AppCompatActivity implements
                 return new CustomRecyclerViewHolder(v);
             }
 
-
             //TODO:Make it so that you can only vote once
 
             @Override
@@ -249,6 +248,39 @@ public class QueueActivity extends AppCompatActivity implements
             }
         };
 
+         // Populate the datas
+
+        songQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                mItems = new ArrayList<Song>();
+                for(DataSnapshot dataSnapshot1 :dataSnapshot.getChildren()) {
+
+                    Song oldSong = dataSnapshot1.getValue(Song.class);
+                    Song newSong = new Song();
+
+                    newSong.setUri(oldSong.getUri());
+                    newSong.setTitle(oldSong.getTitle());
+                    newSong.setArtist(oldSong.getArtist());
+                    newSong.setPositionInMs(oldSong.getPositionInMs());
+                    newSong.setVotes(oldSong.getVotes());
+                    newSong.setImageURL(oldSong.getImageURL());
+                    mItems.add(newSong);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("Hello", "Failed to read value.", error.toException());
+            }
+        });
+
+
 
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
@@ -263,6 +295,11 @@ public class QueueActivity extends AppCompatActivity implements
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Buttons not available until refresh
+                mRecyclerView.setVisibility(View.VISIBLE);
+                playButton.setEnabled(true);
+                skipButton.setEnabled(true);
+
                 currentRoom = Room.getRoomFromID(ID, rooms);
                 u = User.getUserFromID(userID, users);
                 Log.d("QueueActivityRefresh", "onClick: "+currentRoom+" "+u);
@@ -276,8 +313,9 @@ public class QueueActivity extends AppCompatActivity implements
                 }
             }
         });
-        doClick();
+        //doClick();
         Log.d("read data", "onCreate: " + users.size() + "<- user, room -> " + rooms.size());
+
 
         //mAdapter = new CustomAdapter(this, mItems);
         mRecyclerView.setAdapter(mAdapter);
@@ -302,8 +340,8 @@ public class QueueActivity extends AppCompatActivity implements
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("PlayButton", String.valueOf(isPlaying));
-                if(isPlaying){
+                Log.d("PlayButton", String.valueOf(mPlayer.getPlaybackState().isPlaying));
+                if(mPlayer.getPlaybackState().isPlaying){
                     playButton.setImageResource(android.R.drawable.ic_media_play);
                     mPlayer.pause(mOperationCallback);
                     //nowPlaying.setPositionInMs();
@@ -316,6 +354,7 @@ public class QueueActivity extends AppCompatActivity implements
                         mPlayer.resume(mOperationCallback);
                     }
                     else if (mItems.size() != 0) {
+                        mPlayer.skipToNext(mOperationCallback);
                         Log.d("PLAAY", mItems.get(0).getUri());
                         mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
                         TextView title = findViewById(R.id.textView4);
@@ -331,7 +370,6 @@ public class QueueActivity extends AppCompatActivity implements
                         mRecyclerView.setAdapter(mAdapter);
                     }
                 }
-                isPlaying = !isPlaying;
             }
         });
 
@@ -361,8 +399,9 @@ public class QueueActivity extends AppCompatActivity implements
     @Override
     public void onStart() {
         super.onStart();
-        data.readData(users, rooms);
-        doClick();
+        //data.readData(users, rooms);
+        //doClick();
+        mRecyclerView.setVisibility(View.INVISIBLE);
         mAdapter.startListening();
 
     }

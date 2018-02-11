@@ -178,7 +178,7 @@ public class Database {
         for (DataSnapshot postSnapshot : ds.getChildren()) {
             switch (postSnapshot.getKey()) {
                 case ("hostID"):
-                    r.setRoomHost(postSnapshot.getValue(String.class));
+                    r.setHostID(postSnapshot.getValue(String.class));
                 case ("roomID"):
                     r.setRoomID(postSnapshot.getValue(String.class));
                 case ("songs"):
@@ -254,7 +254,7 @@ public class Database {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("searchUser", "onDataChanged: " + dataSnapshot.toString());
-                r.setRoomHost(dataSnapshot.child(rID).getValue(Room.class).getRoomHost());
+                r.setHostID(dataSnapshot.child(rID).getValue(Room.class).getHostID());
                 r.setRoomID(dataSnapshot.child(rID).getValue(Room.class).getRoomID());
                 r.setRoomSongs(dataSnapshot.child(rID).getValue(Room.class).getSongs());
             }
@@ -274,7 +274,7 @@ public class Database {
                     Log.d("searchRoom", "onChildAdded: " + postSnapshot.toString());
                     switch (postSnapshot.getKey()) {
                         case ("hostID"):
-                            r.setRoomHost(postSnapshot.getValue(String.class));
+                            r.setHostID(postSnapshot.getValue(String.class));
                         case ("roomID"):
                             r.setRoomID(postSnapshot.getValue(String.class));
                         case ("songs"):
@@ -299,7 +299,7 @@ public class Database {
                     Log.d("searchRoom", "onChildAdded: "+postSnapshot.toString());
                     switch (postSnapshot.getKey()) {
                         case ("hostID"):
-                            r.setRoomHost(postSnapshot.getValue(String.class));
+                            r.setHostID(postSnapshot.getValue(String.class));
                         case ("roomID"):
                             r.setRoomID(postSnapshot.getValue(String.class));
                         case ("songs"):
