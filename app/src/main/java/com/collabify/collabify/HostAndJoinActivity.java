@@ -35,7 +35,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
     public String Token;
     public Database d;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {git merge 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_and_join);
         CreateRoom = findViewById(R.id.newRoomButton);
