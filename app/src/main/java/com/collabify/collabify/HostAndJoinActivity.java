@@ -82,15 +82,12 @@ public class HostAndJoinActivity extends AppCompatActivity {
     }
 
     public void joinPress(View view){
-        String uID = "";
-        User u = new User();
-        uID = d.addUser(u,false);
 
-        Log.d("HostandJoinButton", "joinPress: "+uID);
+
+        Log.d("HostandJoinButton", "joinPress: ");
 
         Intent intent = new Intent(this, EnterIDActivity.class);
         intent.putExtra(TOKEN, Token);
-        intent.putExtra(USER, uID);
         intent.putExtra(IS_HOST, false);
         startActivity(intent);
     }
