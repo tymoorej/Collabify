@@ -23,6 +23,8 @@ import java.util.List;
 
 public class Database {
 
+    public static final String TAG = "Database";
+
     public DatabaseReference userRef;
     public DatabaseReference roomRef;
 
@@ -47,6 +49,11 @@ public class Database {
         mItems.addAll(songs);
         currentRoom.setRoomSongs(mItems);
         this.updateChild(Room.class, currentRoom.getRoomID(), currentRoom);
+    }
+
+    public void updateUser(User u) {
+
+        this.updateChild(User.class, u.getUserID(), u);
     }
 
     public void clearDatabase() {
@@ -96,8 +103,12 @@ public class Database {
         }
     }
 
+
     public String addRoomWithName(Room r, String name){
         try {
+            name = name.replaceAll("[^a-zA-z0-9 ]","");
+            name = name.replaceAll(" ", "-").toLowerCase();
+            Log.d(TAG, "addRoomWithName: "+name);
             DatabaseReference newRef = roomRef.child(name);
             r.setRoomID(name);
             //r.setRoomSongs(new ArrayList<Song>(Arrays.asList(tempSong(), tempSong(), tempSong())));

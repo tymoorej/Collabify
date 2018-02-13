@@ -23,6 +23,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -49,6 +50,7 @@ public class SearchActivity extends AppCompatActivity {
     public Room currentRoom;
     public Database data;
     public String Token;
+    public User u;
     public String uID;
     public String RID;
     public boolean isHost;
@@ -89,33 +91,45 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-               Song song = (Song)adapterView.getItemAtPosition(i);
-               String title = song.getTitle();
-               String artist = song.getArtist();
-               String uri = song.getUri();
-               String imageURL = song.getImageURL();
-               String[] values = {title, artist, uri, imageURL};
+                u = User.getUserFromID(uID, users);
 
-               currentRoom = Room.getRoomFromID(RID,rooms);
-               Log.d("SearchActivity", "onCreate: "+currentRoom + " " + song.getTitle());
+                Song song = (Song)adapterView.getItemAtPosition(i);
+                final String title = song.getTitle();
+                String artist = song.getArtist();
+                String uri = song.getUri();
+                String imageURL = song.getImageURL();
+                String[] values = {title, artist, uri, imageURL};
+                currentRoom = Room.getRoomFromID(RID,rooms);
+                Log.d("SearchActivity", "onCreate: "+currentRoom + u + " " + song.getTitle());
 
-               if (currentRoom.getSongs() == null) {
-                   currentRoom.setRoomSongs(new ArrayList<Song>(
-                           Arrays.asList(song)));
-               } else {
-                   currentRoom.addRoomSong(song);
-               }
+                if (u.getSongVote() == null) {
+                    HashMap<String, Integer> songVotes = new HashMap<String, Integer>()
+                    {{
+                        put(title, 0);
+                    }};
+                    u.setSongVote(songVotes);
+                } else if (!u.getSongVote().containsKey(title)) {
+                    u.addSongVote(title, 0);
+                }
 
-               data.updateChild(currentRoom.getClass(), currentRoom.getRoomID(), currentRoom );
-               QueueActivity.mItems.add(song);
+                if (currentRoom.getSongs() == null) {
+                    currentRoom.setRoomSongs(new ArrayList<Song>(
+                            Arrays.asList(song)));
+                } else {
+                    currentRoom.addRoomSong(song);
+                }
+                Log.d("SearchActivity", "onCreate:2 "+currentRoom + u + " " + song.getTitle());
+                data.updateChild(u.getClass(), u.getUserID(), u );
+                data.updateChild(currentRoom.getClass(), currentRoom.getRoomID(), currentRoom );
+                QueueActivity.mItems.add(song);
 
-               Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
-               //intent.putExtra(ADDED_SONG, values);
-               intent.putExtra(TOKEN,Token);
-               intent.putExtra(USER, uID);
-               intent.putExtra(ROOM_NAME, RID);
-               intent.putExtra(QueueActivity.IS_HOST, isHost);
-               startActivity(intent);
+                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
+                //intent.putExtra(ADDED_SONG, values);
+                intent.putExtra(TOKEN,Token);
+                intent.putExtra(USER, uID);
+                intent.putExtra(ROOM_NAME, RID);
+                intent.putExtra(QueueActivity.IS_HOST, isHost);
+                startActivity(intent);
             }
         });
 

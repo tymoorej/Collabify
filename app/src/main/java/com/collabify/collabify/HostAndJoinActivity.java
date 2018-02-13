@@ -48,7 +48,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
             //@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
             @Override
             public void onClick(View view) {
-                String roomName = RoomNameText.getText().toString().replaceAll(" ", "-").toLowerCase();
+                String roomName = RoomNameText.getText().toString();
                 if ((roomName.length() != 0) && (Room.getRoomFromID(roomName, rooms) == null)){
                     String roomID = "";String uID="";
                     Room r = new Room();
@@ -77,7 +77,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Invalid Room name...",
                             Toast.LENGTH_SHORT).show();
                 }
-                }
+            }
         });
     }
 

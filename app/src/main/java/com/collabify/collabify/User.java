@@ -3,6 +3,8 @@ package com.collabify.collabify;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Tymoore on 11/18/2017.
@@ -14,6 +16,7 @@ public class User {
     public boolean isHost;
     public String userRoom;
     public String name;
+    public HashMap<String, Integer> songVote;
 
     // CONSTRUCTORS
 
@@ -40,6 +43,13 @@ public class User {
     public void setUserRoom(String userRoom) {
         this.userRoom = userRoom;
     }
+    public void setSongVote(HashMap<String, Integer> songVote) {
+        this.songVote = songVote;
+    }
+
+    public void addSongVote(String name, Integer vote) {
+        this.songVote.put(name, vote);
+    }
 
     // GETTERS
     public String getUserID() {
@@ -53,6 +63,9 @@ public class User {
     }
     public String getUserRoom() {
         return this.userRoom;
+    }
+    public HashMap<String, Integer> getSongVote() {
+        return songVote;
     }
 
 

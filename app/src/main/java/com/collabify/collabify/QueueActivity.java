@@ -25,6 +25,7 @@ import android.widget.TextView;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -80,6 +81,7 @@ public class QueueActivity extends AppCompatActivity implements
     public static final String IS_HOST = "com.collabify.collabify.HOST";
     public static Song nowPlaying;
     public static User u = new User();
+    public static User host = new User();
 
 
 
@@ -225,12 +227,32 @@ public class QueueActivity extends AppCompatActivity implements
                 holder.getUp().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Log.d("UpClick", "onClick: "+holder);
+                        Log.d("UpClick", "onClick: "+holder.getAdapterPosition());
+                        Log.d(TAG, "onClick: "+ u);
+
                         Integer v = mItems.get(holder.getAdapterPosition()).getVotes()+1;
-                        mItems.get(holder.getAdapterPosition()).setVotes(v);
-                        Collections.sort(mItems, new VoteComparator());
-                        data.updateRoom(mItems, currentRoom);
-                        notifyDataSetChanged();
+
+                        if (u.getSongVote() == null) {
+                            host = User.getUserFromID(currentRoom.getHostID(), users);
+                            u.setSongVote(host.getSongVote());
+                        }
+
+                        if (!u.getSongVote().containsKey(mItems.get(holder.getAdapterPosition()).getTitle()) ||
+                                u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) < 1) {
+                            mItems.get(holder.getAdapterPosition()).setVotes(v);
+
+                            Log.d(TAG, "SongDude: "+mItems.get(holder.getAdapterPosition()));
+                            if (u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) == -1) {
+                                u.getSongVote().put(mItems.get(holder.getAdapterPosition()).getTitle(), 0);
+                            } else if (u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) == 0) {
+                                u.getSongVote().put(mItems.get(holder.getAdapterPosition()).getTitle(), 1);
+                            }
+                            Collections.sort(mItems, new VoteComparator());
+                            data.updateUser(u);
+                            data.updateRoom(mItems, currentRoom);
+                            notifyDataSetChanged();
+                        }
+
                     }
                 });
 
@@ -239,10 +261,26 @@ public class QueueActivity extends AppCompatActivity implements
                     public void onClick(View view) {
                         Log.d("DownClick", "onClick: "+holder);
                         Integer v = mItems.get(holder.getAdapterPosition()).getVotes()-1;
-                        mItems.get(holder.getAdapterPosition()).setVotes(v);
-                        Collections.sort(mItems, new VoteComparator());
-                        data.updateRoom(mItems, currentRoom);
-                        notifyDataSetChanged();
+
+                        if (u.getSongVote() == null) {
+                            host = User.getUserFromID(currentRoom.getHostID(), users);
+                            u.setSongVote(host.getSongVote());
+                        }
+
+                        if (!u.getSongVote().containsKey(mItems.get(holder.getAdapterPosition()).getTitle()) ||
+                                u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) > -1) {
+                            mItems.get(holder.getAdapterPosition()).setVotes(v);
+
+                            if (u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) == 1) {
+                                u.getSongVote().put(mItems.get(holder.getAdapterPosition()).getTitle(), 0);
+                            } else if (u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) == 0) {
+                                u.getSongVote().put(mItems.get(holder.getAdapterPosition()).getTitle(), -1);
+                            }
+                            Collections.sort(mItems, new VoteComparator());
+                            data.updateUser(u);
+                            data.updateRoom(mItems, currentRoom);
+                            notifyDataSetChanged();
+                        }
                     }
                 });
             }
