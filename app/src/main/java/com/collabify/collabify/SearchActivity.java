@@ -129,70 +129,73 @@ public class SearchActivity extends AppCompatActivity {
 
                 String trackToSearch = searchText.getText().toString();
 
-                if (trackToSearch.length() != 0) {
-                    Network network = new Network(new AsyncResponse() {
-                        @Override
-                        public void processFinish(Object output) {
-                            ArrayList<Song> searchedSongs = (ArrayList<Song>) output;
-                            ListView l = (ListView) findViewById(R.id.listView);
+        if(trackToSearch.length()!=0){
+                            Network network = new Network(new AsyncResponse() {
 
-                            l.setAdapter(new MyAdapter(getApplicationContext(), searchedSongs));
-                            search.setVisibility(View.INVISIBLE);
-                            searchText.setVisibility(View.INVISIBLE);
-                            mAdapter.notifyDataSetChanged();
+                                @Override
+                                public void processFinish(Object output) {
+                                    ArrayList<Song> searchedSongs = (ArrayList<Song>) output;
+                                    ListView l = (ListView) findViewById(R.id.listView);
+
+                                    l.setAdapter(new MyAdapter(getApplicationContext(), searchedSongs));
+                                    search.setVisibility(View.INVISIBLE);
+                                    searchText.setVisibility(View.INVISIBLE);
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                            });
+                            network.execute(Token, trackToSearch);
+                            //mAdapter.notifyDataSetChanged();
+                            //getResults(network);
                         }
+
+
+                    }
+        });
+
+            back.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
+                            intent.putExtra(TOKEN, Token);
+                            startActivity(intent);
+                        }
+
+
                     });
-                    network.execute(Token, trackToSearch);
-                    //mAdapter.notifyDataSetChanged();
-                    //getResults(network);
+
+
+                }
+
+
+
+            public ArrayList<Song> getResults(Network network) {
+
+                tracks = network.getSongs();
+                try {
+                    ArrayList<Song> ListOSongs = new ArrayList<Song>();
+                    for (Track t : tracks) {
+                        ListOSongs.add(new Song(t.name, t.artists.get(0).name, 0, t.uri, t.album.images.get(0).url, 0));
+                        //ListOSongs = ListOSongs + "Title: " + t.name + "   Artist: " + t.artists.get(0).name + "\n\n\n";
+                        Log.d("SKRAAAA", t.id);
+                        //RecyclerViewClass fuckinworkpls = new RecyclerViewClass(t.name, t.artists.get(0).toString(), 0, t.uri);
+                        //Log.d("wtf", fuckinworkpls.toString());
+                        //SearchActivity.mAdapter.notifyDataSetChanged();
+                        //mAdapter.notifyDataSetChanged();
+                    }
+                    final ArrayList<Song> endResult = ListOSongs;
+
+                    return endResult;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return new ArrayList<Song>();
                 }
 
             }
-        });
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), QueueActivity.class);
-                intent.putExtra(TOKEN, Token);
-                startActivity(intent);
-            }
-
-
-        });
-
-
-    }
-
-
-
-    public ArrayList<Song> getResults(Network network) {
-
-        tracks = network.getSongs();
-        try {
-            ArrayList<Song> ListOSongs = new ArrayList<Song>();
-            for (Track t : tracks) {
-                ListOSongs.add(new Song(t.name, t.artists.get(0).name, 0, t.uri, t.album.images.get(0).url, 0));
-                //ListOSongs = ListOSongs + "Title: " + t.name + "   Artist: " + t.artists.get(0).name + "\n\n\n";
-                Log.d("SKRAAAA", t.id);
-                //RecyclerViewClass fuckinworkpls = new RecyclerViewClass(t.name, t.artists.get(0).toString(), 0, t.uri);
-                //Log.d("wtf", fuckinworkpls.toString());
-                //SearchActivity.mAdapter.notifyDataSetChanged();
-                //mAdapter.notifyDataSetChanged();
-            }
-            final ArrayList<Song> endResult = ListOSongs;
-
-        return endResult;
-    } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<Song>();
         }
 
-    }
 
 
 
 
-    }
 
 
