@@ -1,5 +1,6 @@
 package com.collabify.collabify;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
@@ -47,6 +48,7 @@ public class SearchActivity extends AppCompatActivity {
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static final String USER = "com.collabify.collabify.USER";
     public static final String IS_HOST = "com.collabify.collabify.HOST";
+    public static final String MESSAGE = "com.collabify.collabify.NEWMESSAGE";
     public Room currentRoom;
     public Database data;
     public String Token;
@@ -129,7 +131,10 @@ public class SearchActivity extends AppCompatActivity {
                 intent.putExtra(USER, uID);
                 intent.putExtra(ROOM_NAME, RID);
                 intent.putExtra(QueueActivity.IS_HOST, isHost);
-                startActivity(intent);
+                intent.putExtra(MESSAGE, "confirmation");
+                //startActivity(intent);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
             }
         });
 

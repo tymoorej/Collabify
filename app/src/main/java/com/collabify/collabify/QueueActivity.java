@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.app.Activity;
 
 
 import java.sql.Time;
@@ -46,11 +47,12 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
+
 public class QueueActivity extends AppCompatActivity implements
         SpotifyPlayer.NotificationCallback, ConnectionStateCallback{
 
     private SpotifyPlayer mPlayer;
-
+    public static final int REQUEST_CODE = 1;
     private RecyclerView mRecyclerView;
     //private CustomAdapter mAdapter;
     private FirebaseRecyclerAdapter mAdapter;
@@ -369,7 +371,8 @@ public class QueueActivity extends AppCompatActivity implements
                 intent.putExtra(USER, userID);
                 intent.putExtra(IS_HOST, isHost);
 
-                startActivity(intent);
+                //startActivity(intent);
+                startActivityForResult(intent, 1);
                 //mItems.add(new RecyclerViewClass("title", " artist", 0, mUris.remove(mUris.size() - 1)));
                 //mAdapter.notifyDataSetChanged();
             }
@@ -441,6 +444,7 @@ public class QueueActivity extends AppCompatActivity implements
         //doClick();
         mRecyclerView.setVisibility(View.INVISIBLE);
         mAdapter.startListening();
+        doClick();
 
     }
 
@@ -484,6 +488,22 @@ public class QueueActivity extends AppCompatActivity implements
         Log.d("QueueActivity", "Playback event received: " + playerEvent.name());
         switch (playerEvent) {
             // Handle event type as necessary
+            case kSpPlaybackNotifyAudioDeliveryDone:
+                if (mItems.size() != 0) {
+                    Log.d("PLAAY", mItems.get(0).getUri());
+                    mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
+                    TextView title = findViewById(R.id.textView4);
+                    TextView artist = findViewById(R.id.textView5);
+                    ImageView image = findViewById(R.id.imageView);
+                    title.setText((CharSequence) mItems.get(0).getTitle());
+                    artist.setText((CharSequence) mItems.get(0).getArtist());
+                    new DownloadImageTask(image).execute(mItems.get(0).getImageURL());
+                    nowPlaying = mItems.get(0);
+                    mItems.remove(0);
+                    data.updateRoom(mItems, currentRoom);
+                    mAdapter.notifyDataSetChanged();
+                    mRecyclerView.setAdapter(mAdapter);
+            }
             default:
                 break;
         }
@@ -496,6 +516,23 @@ public class QueueActivity extends AppCompatActivity implements
             // Handle error type as necessary
             default:
                 break;
+        }
+    }
+
+    // Call Back method  to get the Songs form other Activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == REQUEST_CODE) {
+
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra(SearchActivity.MESSAGE);
+                // do something with the result
+                Log.d("LOOK AT DIS", "confirmation");
+
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                // some stuff that will happen if there's no result
+            }
         }
     }
 
