@@ -14,7 +14,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -51,9 +54,32 @@ public class Database {
         this.updateChild(Room.class, currentRoom.getRoomID(), currentRoom);
     }
 
+    public void updateUserVotes(List<Song> mItems, User u) {
+        HashMap<String, Integer> userSongs = u.getSongVote();
+        HashMap<String, Integer> newSongs = new HashMap<>();
+        HashSet<String> mItemsSet = new HashSet<String>();
+
+        for (Song name: mItems) {
+            mItemsSet.add(name.getTitle());
+        }
+
+        if (userSongs == null) {
+            return;
+        }
+
+         // Removes extra songs in userSongs
+        for (String title: userSongs.keySet()) {
+            if (mItemsSet.contains(title)) {
+                newSongs.put(title,userSongs.get(title));
+            }
+        }
+        u.setSongVote(newSongs);
+        this.updateUser(u);
+    }
+
     public void updateUser(User u) {
 
-        this.updateChild(User.class, u.getUserID(), u);
+        this.updateChild(u.getClass(), u.getUserID(), u);
     }
 
     public void clearDatabase() {
@@ -106,8 +132,7 @@ public class Database {
 
     public String addRoomWithName(Room r, String name){
         try {
-            name = name.replaceAll("[^a-zA-z0-9 ]","");
-            name = name.replaceAll(" ", "-").toLowerCase();
+            name = Database.removeIllegalChars(name);
             Log.d(TAG, "addRoomWithName: "+name);
             DatabaseReference newRef = roomRef.child(name);
             r.setRoomID(name);
@@ -354,7 +379,14 @@ public class Database {
 
                 @Override
                 public void onChildChanged(com.google.firebase.database.DataSnapshot dataSnapshot, String s) {
-
+                    User u = dataSnapshot.getValue(User.class);
+                    for (User user : users) {
+                        if (user.getUserID() == u.getUserID()) {
+                            user.setSongVote(u.getSongVote());
+                            user.setUserRoom(u.getUserRoom());
+                            user.setIsHost(u.getIsHost());
+                        }
+                    }
                 }
 
                 @Override
@@ -410,5 +442,11 @@ public class Database {
         catch(Exception e){
             Log.d("ERROR",e.getMessage());
         }
+    }
+
+    public static String removeIllegalChars(String name) {
+        name = name.replaceAll("[^a-zA-z0-9 ]","");
+        name = name.replaceAll(" ", "-").toLowerCase();
+        return name;
     }
 }

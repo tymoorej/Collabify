@@ -44,6 +44,7 @@ public class EnterIDActivity extends AppCompatActivity {
         Intent intent = new Intent(this, QueueActivity.class);
         EditText roomText = (EditText) findViewById(R.id.enterID);
         String roomID = roomText.getText().toString();
+        roomID = Database.removeIllegalChars(roomID);
 
         String uID = "";
         u = new User();

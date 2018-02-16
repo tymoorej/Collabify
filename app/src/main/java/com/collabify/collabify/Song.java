@@ -71,7 +71,7 @@ public class Song {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Song{" +
                 "title='" + title + '\'' +
                 ", artist='" + artist + '\'' +
                 ", votes=" + votes + '\'' +

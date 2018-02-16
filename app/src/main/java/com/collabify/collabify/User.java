@@ -68,7 +68,11 @@ public class User {
         return songVote;
     }
 
-
+    public void resetSongVote() {
+        for (String s: this.getSongVote().keySet()) {
+            this.getSongVote().put(s, 0);
+        }
+    }
 
 
     @Override
@@ -78,16 +82,20 @@ public class User {
                 ", name='" + name + '\'' +
                 ", isHost=" + isHost + '\'' +
                 ", roomID=" + userRoom + '\'' +
+                ", songLen=" + songVote + '\'' +
                 '}';
     }
 
     static public User getUserFromID(String userID, ArrayList<User> users){
+        User ret = null;
         for(User u: users){
             Log.d("USERs", "getUserFromID: "+userID + " " +u.toString());
             if(u.getUserID().equals(userID)){
-                return u;
+                ret = u;
+                break;
             }
         }
-        return null;
+
+        return ret;
     }
 }

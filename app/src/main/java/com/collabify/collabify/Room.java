@@ -13,6 +13,7 @@ public class Room {
     String roomID;
     String hostID;
     String roomName;
+    Song currentlyPlaying;
     ArrayList<Song> songs;
 
     // CONSTRUCTORS
@@ -41,6 +42,9 @@ public class Room {
     public void setRoomSongs(ArrayList<Song> songs) {
         this.songs = songs;
     }
+    public void setCurrentlyPlaying(Song currentlyPlaying) {
+        this.currentlyPlaying = currentlyPlaying;
+    }
 
     public void addRoomSong(Song song) {
         this.songs.add(song);
@@ -59,6 +63,9 @@ public class Room {
     public ArrayList<Song> getSongs() {
         return this.songs;
     }
+    public Song getCurrentlyPlaying() {
+        return currentlyPlaying;
+    }
 
 
     @Override
@@ -66,7 +73,8 @@ public class Room {
         return "Room{" +
                 "roomID='" + roomID + '\'' +
                 ", hostID='" + hostID + '\'' +
-                ", songs=" + songs +
+                ", songs=" + songs + '\'' +
+                ", currentlyPLaying=" + currentlyPlaying +
                 '}';
     }
 

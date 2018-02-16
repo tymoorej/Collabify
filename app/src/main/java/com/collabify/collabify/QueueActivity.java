@@ -234,16 +234,22 @@ public class QueueActivity extends AppCompatActivity implements
 
                         Integer v = mItems.get(holder.getAdapterPosition()).getVotes()+1;
 
-                        if (u.getSongVote() == null) {
+                        if (u.getSongVote() == null && !u.getIsHost()) {
                             host = User.getUserFromID(currentRoom.getHostID(), users);
                             u.setSongVote(host.getSongVote());
+                            u.resetSongVote();
                         }
+//                        else {
+//                            u = User.getUserFromID(userID, users);
+//                        }
 
                         if (!u.getSongVote().containsKey(mItems.get(holder.getAdapterPosition()).getTitle()) ||
                                 u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) < 1) {
                             mItems.get(holder.getAdapterPosition()).setVotes(v);
 
                             Log.d(TAG, "SongDude: "+mItems.get(holder.getAdapterPosition()));
+                            Log.d(TAG, "onClick: "+u.getSongVote());
+                            Log.d(TAG, "onClick: "+ mItems.get(holder.getAdapterPosition()).getTitle());
                             if (u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) == -1) {
                                 u.getSongVote().put(mItems.get(holder.getAdapterPosition()).getTitle(), 0);
                             } else if (u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) == 0) {
@@ -264,9 +270,10 @@ public class QueueActivity extends AppCompatActivity implements
                         Log.d("DownClick", "onClick: "+holder);
                         Integer v = mItems.get(holder.getAdapterPosition()).getVotes()-1;
 
-                        if (u.getSongVote() == null) {
+                        if (u.getSongVote() == null && !u.getIsHost()) {
                             host = User.getUserFromID(currentRoom.getHostID(), users);
                             u.setSongVote(host.getSongVote());
+                            u.resetSongVote();
                         }
 
                         if (!u.getSongVote().containsKey(mItems.get(holder.getAdapterPosition()).getTitle()) ||
@@ -336,26 +343,34 @@ public class QueueActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 // Buttons not available until refresh
-                mRecyclerView.setVisibility(View.VISIBLE);
                 playButton.setEnabled(true);
                 skipButton.setEnabled(true);
 
                 currentRoom = Room.getRoomFromID(ID, rooms);
                 u = User.getUserFromID(userID, users);
                 Log.d("QueueActivityRefresh", "onClick: "+currentRoom+" "+u);
-//                data.searchUser(userID,u);data.searchRoom(ID,currentRoom);
+
                 if ((u != null) && (currentRoom != null)) {
                     Log.d("refresh button", currentRoom.toString());
                     Log.d("refresh button", u.toString());
                     songs = currentRoom.songs;
                     refreshButton.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.VISIBLE);
+
+                    // Set up nowPlaying on join a room
+                    if (currentRoom.getCurrentlyPlaying() != null) {
+                        TextView title = findViewById(R.id.textView4);
+                        TextView artist = findViewById(R.id.textView5);
+                        ImageView image = findViewById(R.id.imageView);
+                        title.setText((CharSequence) currentRoom.getCurrentlyPlaying().getTitle());
+                        artist.setText((CharSequence) currentRoom.getCurrentlyPlaying().getArtist());
+                        new DownloadImageTask(image).execute(currentRoom.getCurrentlyPlaying().getImageURL());
+                    }
                 }
             }
         });
         //doClick();
         Log.d("read data", "onCreate: " + users.size() + "<- user, room -> " + rooms.size());
-
 
         //mAdapter = new CustomAdapter(this, mItems);
         mRecyclerView.setAdapter(mAdapter);
@@ -371,10 +386,9 @@ public class QueueActivity extends AppCompatActivity implements
                 intent.putExtra(USER, userID);
                 intent.putExtra(IS_HOST, isHost);
 
-                //startActivity(intent);
+
                 startActivityForResult(intent, 1);
-                //mItems.add(new RecyclerViewClass("title", " artist", 0, mUris.remove(mUris.size() - 1)));
-                //mAdapter.notifyDataSetChanged();
+
             }
         });
 
@@ -395,20 +409,7 @@ public class QueueActivity extends AppCompatActivity implements
                         mPlayer.resume(mOperationCallback);
                     }
                     else if (mItems.size() != 0) {
-                        mPlayer.skipToNext(mOperationCallback);
-                        Log.d("PLAAY", mItems.get(0).getUri());
-                        mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
-                        TextView title = findViewById(R.id.textView4);
-                        TextView artist = findViewById(R.id.textView5);
-                        ImageView image = findViewById(R.id.imageView);
-                        title.setText((CharSequence) mItems.get(0).getTitle());
-                        artist.setText((CharSequence) mItems.get(0).getArtist());
-                        new DownloadImageTask(image).execute(mItems.get(0).getImageURL());
-                        nowPlaying = mItems.get(0);
-                        mItems.remove(0);
-                        data.updateRoom(mItems, currentRoom);
-                        mAdapter.notifyDataSetChanged();
-                        mRecyclerView.setAdapter(mAdapter);
+                        skipButton.performClick();
                     }
                 }
             }
@@ -429,7 +430,11 @@ public class QueueActivity extends AppCompatActivity implements
                     new DownloadImageTask(image).execute(mItems.get(0).getImageURL());
                     nowPlaying = mItems.get(0);
                     mItems.remove(0);
+                    currentRoom.setCurrentlyPlaying(nowPlaying);
+                    //Databoos
+                    data.updateUserVotes(mItems, u);
                     data.updateRoom(mItems, currentRoom);
+
                     mAdapter.notifyDataSetChanged();
                     mRecyclerView.setAdapter(mAdapter);
                 }
@@ -455,7 +460,8 @@ public class QueueActivity extends AppCompatActivity implements
     }
 
     public void doClick(){
-        refreshButton.callOnClick();
+        //refreshButton.callOnClick();
+        refreshButton.performClick();
     }
 
     @Override
@@ -489,21 +495,7 @@ public class QueueActivity extends AppCompatActivity implements
         switch (playerEvent) {
             // Handle event type as necessary
             case kSpPlaybackNotifyAudioDeliveryDone:
-                if (mItems.size() != 0) {
-                    Log.d("PLAAY", mItems.get(0).getUri());
-                    mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
-                    TextView title = findViewById(R.id.textView4);
-                    TextView artist = findViewById(R.id.textView5);
-                    ImageView image = findViewById(R.id.imageView);
-                    title.setText((CharSequence) mItems.get(0).getTitle());
-                    artist.setText((CharSequence) mItems.get(0).getArtist());
-                    new DownloadImageTask(image).execute(mItems.get(0).getImageURL());
-                    nowPlaying = mItems.get(0);
-                    mItems.remove(0);
-                    data.updateRoom(mItems, currentRoom);
-                    mAdapter.notifyDataSetChanged();
-                    mRecyclerView.setAdapter(mAdapter);
-            }
+                skipButton.performClick();
             default:
                 break;
         }
@@ -528,7 +520,7 @@ public class QueueActivity extends AppCompatActivity implements
             if (resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra(SearchActivity.MESSAGE);
                 // do something with the result
-                Log.d("LOOK AT DIS", "confirmation");
+                Log.d(TAG, "confirmation");
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 // some stuff that will happen if there's no result

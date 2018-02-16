@@ -44,6 +44,7 @@ public class SearchActivity extends AppCompatActivity {
     private EditText searchText;
     private List<Track> tracks;
     //public static String ADDED_SONG = "com.collabify.collabify.fuqdupshizza";
+    public static final String TAG = "SearchActivity";
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static final String USER = "com.collabify.collabify.USER";
@@ -96,21 +97,27 @@ public class SearchActivity extends AppCompatActivity {
                 u = User.getUserFromID(uID, users);
 
                 Song song = (Song)adapterView.getItemAtPosition(i);
-                final String title = song.getTitle();
+                String title = song.getTitle().replaceAll("[^a-zA-z0-9\\- ]","");
                 String artist = song.getArtist();
                 String uri = song.getUri();
                 String imageURL = song.getImageURL();
                 String[] values = {title, artist, uri, imageURL};
                 currentRoom = Room.getRoomFromID(RID,rooms);
+                song.setTitle(title);
                 Log.d("SearchActivity", "onCreate: "+currentRoom + u + " " + song.getTitle());
 
                 if (u.getSongVote() == null) {
-                    HashMap<String, Integer> songVotes = new HashMap<String, Integer>()
-                    {{
-                        put(title, 0);
-                    }};
+                    HashMap<String, Integer> songVotes = new HashMap<String, Integer>();
+                    songVotes.put(title, 0);
+
                     u.setSongVote(songVotes);
-                } else if (!u.getSongVote().containsKey(title)) {
+                } else if (u.getSongVote().containsKey(title)){
+                    while (u.getSongVote().containsKey(title)) {
+                        title += ' ';
+                    }
+                    song.setTitle(title);
+                    u.addSongVote(title, 0);
+                } else {
                     u.addSongVote(title, 0);
                 }
 
@@ -121,7 +128,7 @@ public class SearchActivity extends AppCompatActivity {
                     currentRoom.addRoomSong(song);
                 }
                 Log.d("SearchActivity", "onCreate:2 "+currentRoom + u + " " + song.getTitle());
-                data.updateChild(u.getClass(), u.getUserID(), u );
+                data.updateChild(u.getClass(), u.getUserID(), u);
                 data.updateChild(currentRoom.getClass(), currentRoom.getRoomID(), currentRoom );
                 QueueActivity.mItems.add(song);
 
@@ -158,7 +165,11 @@ public class SearchActivity extends AppCompatActivity {
                             mAdapter.notifyDataSetChanged();
                         }
                     });
-                    network.execute(Token, trackToSearch);
+                    try {
+                        network.execute(Token, trackToSearch);
+                    } catch (Exception e) {
+                        Log.e(TAG, "onClick: ", e);
+                    }
                     //mAdapter.notifyDataSetChanged();
                     //getResults(network);
                 }

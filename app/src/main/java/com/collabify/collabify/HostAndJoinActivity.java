@@ -52,7 +52,7 @@ public class HostAndJoinActivity extends AppCompatActivity {
                 if ((roomName.length() != 0) && (Room.getRoomFromID(roomName, rooms) == null)){
                     String roomID = "";String uID="";
                     Room r = new Room();
-                    roomID = d.addRoomWithName(r, roomName);
+                    roomID = d.addRoomWithName(r, roomName); // Illegal Chars Removed
                     User u = new User();
                     uID = d.addUser(u,true);
 
