@@ -27,6 +27,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -150,7 +151,14 @@ public class QueueActivity extends AppCompatActivity implements
             new DownloadImageTask(image).execute(nowPlaying.getImageURL());
             playButton.setImageResource(android.R.drawable.ic_media_pause);
         } else{
-            if (nowPlaying != null) {
+            if(nowPlaying != null && currentRoom.getCurrentlyPlaying() != null) {
+                TextView title = findViewById(R.id.textView4);
+                TextView artist = findViewById(R.id.textView5);
+                ImageView image = findViewById(R.id.imageView);
+                title.setText((CharSequence) currentRoom.getCurrentlyPlaying().getTitle());
+                artist.setText((CharSequence) currentRoom.getCurrentlyPlaying().getArtist());
+                new DownloadImageTask(image).execute(currentRoom.getCurrentlyPlaying().getImageURL());
+            } else if (nowPlaying != null) {
                 TextView title = findViewById(R.id.textView4);
                 TextView artist = findViewById(R.id.textView5);
                 ImageView image = findViewById(R.id.imageView);
@@ -239,6 +247,11 @@ public class QueueActivity extends AppCompatActivity implements
                             u.setSongVote(host.getSongVote());
                             u.resetSongVote();
                         }
+                        for (Song song: currentRoom.getSongs()) {
+                            if (!u.getSongVote().containsKey(song.getTitle())) {
+                                u.getSongVote().put(song.getTitle(), 0);
+                            }
+                        }
 //                        else {
 //                            u = User.getUserFromID(userID, users);
 //                        }
@@ -257,7 +270,7 @@ public class QueueActivity extends AppCompatActivity implements
                             }
                             Collections.sort(mItems, new VoteComparator());
                             data.updateUser(u);
-                            data.updateRoom(mItems, currentRoom);
+                            data.updateRoomSongs(mItems, currentRoom);
                             notifyDataSetChanged();
                         }
 
@@ -276,6 +289,12 @@ public class QueueActivity extends AppCompatActivity implements
                             u.resetSongVote();
                         }
 
+                        for (Song song: currentRoom.getSongs()) {
+                            if (!u.getSongVote().containsKey(song.getTitle())) {
+                                u.getSongVote().put(song.getTitle(), 0);
+                            }
+                        }
+
                         if (!u.getSongVote().containsKey(mItems.get(holder.getAdapterPosition()).getTitle()) ||
                                 u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) > -1) {
                             mItems.get(holder.getAdapterPosition()).setVotes(v);
@@ -287,7 +306,7 @@ public class QueueActivity extends AppCompatActivity implements
                             }
                             Collections.sort(mItems, new VoteComparator());
                             data.updateUser(u);
-                            data.updateRoom(mItems, currentRoom);
+                            data.updateRoomSongs(mItems, currentRoom);
                             notifyDataSetChanged();
                         }
                     }
@@ -314,6 +333,17 @@ public class QueueActivity extends AppCompatActivity implements
                     newSong.setPositionInMs(oldSong.getPositionInMs());
                     newSong.setVotes(oldSong.getVotes());
                     newSong.setImageURL(oldSong.getImageURL());
+
+                    refreshButton.performClick();
+                    if (currentRoom.getSongs() != null) {
+                        HashSet<Song> songCheck = new HashSet<>(currentRoom.getSongs());
+                        if (!songCheck.contains(newSong)) {
+                            currentRoom.addRoomSong(newSong);
+                        }
+                    } else {
+                        currentRoom.setRoomSongs(new ArrayList<Song>());
+                        currentRoom.addRoomSong(newSong);
+                    }
                     mItems.add(newSong);
 
                 }
@@ -433,7 +463,7 @@ public class QueueActivity extends AppCompatActivity implements
                     currentRoom.setCurrentlyPlaying(nowPlaying);
                     //Databoos
                     data.updateUserVotes(mItems, u);
-                    data.updateRoom(mItems, currentRoom);
+                    data.updateRoomSongs(mItems, currentRoom);
 
                     mAdapter.notifyDataSetChanged();
                     mRecyclerView.setAdapter(mAdapter);
