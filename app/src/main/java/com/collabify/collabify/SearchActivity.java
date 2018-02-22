@@ -105,6 +105,7 @@ public class SearchActivity extends AppCompatActivity {
                 song.setTitle(title);
                 Log.d("SearchActivity", "onCreate: "+currentRoom + u + " " + song.getTitle());
 
+                // TODO: Make this into a method
                 if (u.getSongVote() == null) {
                     HashMap<String, Integer> songVotes = new HashMap<String, Integer>();
                     songVotes.put(title, 0);

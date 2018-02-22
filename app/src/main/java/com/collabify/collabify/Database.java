@@ -47,7 +47,7 @@ public class Database {
         }
     }
 
-    public void updateRoom(List<Song> songs, Room currentRoom) {
+    public void updateRoomSongs(List<Song> songs, Room currentRoom) {
         ArrayList<Song> mItems = new ArrayList<>();
         mItems.addAll(songs);
         currentRoom.setRoomSongs(mItems);

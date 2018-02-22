@@ -21,12 +21,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.app.Activity;
+import android.widget.Toast;
 
 
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -150,7 +152,14 @@ public class QueueActivity extends AppCompatActivity implements
             new DownloadImageTask(image).execute(nowPlaying.getImageURL());
             playButton.setImageResource(android.R.drawable.ic_media_pause);
         } else{
-            if (nowPlaying != null) {
+            if(nowPlaying != null && currentRoom.getCurrentlyPlaying() != null) {
+                TextView title = findViewById(R.id.textView4);
+                TextView artist = findViewById(R.id.textView5);
+                ImageView image = findViewById(R.id.imageView);
+                title.setText((CharSequence) currentRoom.getCurrentlyPlaying().getTitle());
+                artist.setText((CharSequence) currentRoom.getCurrentlyPlaying().getArtist());
+                new DownloadImageTask(image).execute(currentRoom.getCurrentlyPlaying().getImageURL());
+            } else if (nowPlaying != null) {
                 TextView title = findViewById(R.id.textView4);
                 TextView artist = findViewById(R.id.textView5);
                 ImageView image = findViewById(R.id.imageView);
@@ -238,6 +247,13 @@ public class QueueActivity extends AppCompatActivity implements
                             host = User.getUserFromID(currentRoom.getHostID(), users);
                             u.setSongVote(host.getSongVote());
                             u.resetSongVote();
+                        } else if (u.getSongVote() == null) {
+                            u.setSongVote(new HashMap<String, Integer>());
+                        }
+                        for (Song song: currentRoom.getSongs()) {
+                            if (!u.getSongVote().containsKey(song.getTitle())) {
+                                u.getSongVote().put(song.getTitle(), 0);
+                            }
                         }
 //                        else {
 //                            u = User.getUserFromID(userID, users);
@@ -257,7 +273,7 @@ public class QueueActivity extends AppCompatActivity implements
                             }
                             Collections.sort(mItems, new VoteComparator());
                             data.updateUser(u);
-                            data.updateRoom(mItems, currentRoom);
+                            data.updateRoomSongs(mItems, currentRoom);
                             notifyDataSetChanged();
                         }
 
@@ -276,6 +292,12 @@ public class QueueActivity extends AppCompatActivity implements
                             u.resetSongVote();
                         }
 
+                        for (Song song: currentRoom.getSongs()) {
+                            if (!u.getSongVote().containsKey(song.getTitle())) {
+                                u.getSongVote().put(song.getTitle(), 0);
+                            }
+                        }
+
                         if (!u.getSongVote().containsKey(mItems.get(holder.getAdapterPosition()).getTitle()) ||
                                 u.getSongVote().get(mItems.get(holder.getAdapterPosition()).getTitle()) > -1) {
                             mItems.get(holder.getAdapterPosition()).setVotes(v);
@@ -287,7 +309,7 @@ public class QueueActivity extends AppCompatActivity implements
                             }
                             Collections.sort(mItems, new VoteComparator());
                             data.updateUser(u);
-                            data.updateRoom(mItems, currentRoom);
+                            data.updateRoomSongs(mItems, currentRoom);
                             notifyDataSetChanged();
                         }
                     }
@@ -314,6 +336,17 @@ public class QueueActivity extends AppCompatActivity implements
                     newSong.setPositionInMs(oldSong.getPositionInMs());
                     newSong.setVotes(oldSong.getVotes());
                     newSong.setImageURL(oldSong.getImageURL());
+
+                    refreshButton.performClick();
+                    if (currentRoom.getSongs() != null) {
+                        HashSet<Song> songCheck = new HashSet<>(currentRoom.getSongs());
+                        if (!songCheck.contains(newSong)) {
+                            currentRoom.addRoomSong(newSong);
+                        }
+                    } else {
+                        currentRoom.setRoomSongs(new ArrayList<Song>());
+                        currentRoom.addRoomSong(newSong);
+                    }
                     mItems.add(newSong);
 
                 }
@@ -327,7 +360,35 @@ public class QueueActivity extends AppCompatActivity implements
             }
         });
 
+        // Populate now playing
+        Query nowPlayingQuery = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("Rooms")
+                .child(ID)
+                .child("currentlyPlaying");
 
+        nowPlayingQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot){
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+
+                TextView title = findViewById(R.id.textView4);
+                TextView artist = findViewById(R.id.textView5);
+                ImageView image = findViewById(R.id.imageView);
+                if (currentRoom != null && currentRoom.getCurrentlyPlaying() != null){
+                    title.setText((CharSequence) dataSnapshot.child("title").getValue(String.class));
+                    artist.setText((CharSequence) dataSnapshot.child("artist").getValue(String.class));
+                    new DownloadImageTask(image).execute(dataSnapshot.child("imageURL").getValue(String.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value. nowPlay", error.toException());
+            }
+        });
 
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
@@ -357,15 +418,6 @@ public class QueueActivity extends AppCompatActivity implements
                     refreshButton.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.VISIBLE);
 
-                    // Set up nowPlaying on join a room
-                    if (currentRoom.getCurrentlyPlaying() != null) {
-                        TextView title = findViewById(R.id.textView4);
-                        TextView artist = findViewById(R.id.textView5);
-                        ImageView image = findViewById(R.id.imageView);
-                        title.setText((CharSequence) currentRoom.getCurrentlyPlaying().getTitle());
-                        artist.setText((CharSequence) currentRoom.getCurrentlyPlaying().getArtist());
-                        new DownloadImageTask(image).execute(currentRoom.getCurrentlyPlaying().getImageURL());
-                    }
                 }
             }
         });
@@ -433,7 +485,7 @@ public class QueueActivity extends AppCompatActivity implements
                     currentRoom.setCurrentlyPlaying(nowPlaying);
                     //Databoos
                     data.updateUserVotes(mItems, u);
-                    data.updateRoom(mItems, currentRoom);
+                    data.updateRoomSongs(mItems, currentRoom);
 
                     mAdapter.notifyDataSetChanged();
                     mRecyclerView.setAdapter(mAdapter);
