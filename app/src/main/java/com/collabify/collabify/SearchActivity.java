@@ -38,7 +38,7 @@ public class SearchActivity extends AppCompatActivity {
 
 
     private Button search;
-    private Button daButton;
+    private Button backButton;
     private ListView listOfSongs;
     //public static String LIST_SONGS = "com.collabify.collabify.fuqdupshizza";
     private EditText searchText;
@@ -77,7 +77,6 @@ public class SearchActivity extends AppCompatActivity {
         RID = intent.getStringExtra(QueueActivity.ROOM_NAME);
         isHost = intent.getBooleanExtra(QueueActivity.IS_HOST,false);
         Log.d("SearchActivity:", "onCreate Intents: " + Token+"\n " + uID + "\n "+RID);
-
 
         search = (Button) findViewById(R.id.searchButton);
         searchText = (EditText) findViewById(R.id.searchText);
@@ -160,8 +159,6 @@ public class SearchActivity extends AppCompatActivity {
                             ListView l = (ListView)findViewById(R.id.listView);
 
                             l.setAdapter(new MyAdapter(getApplicationContext(), searchedSongs));
-                            search.setVisibility(View.INVISIBLE);
-                            searchText.setVisibility(View.INVISIBLE);
                             mAdapter.notifyDataSetChanged();
                         }
                     });
@@ -176,7 +173,11 @@ public class SearchActivity extends AppCompatActivity {
             }
 
 
-        });}
+        });
+
+
+
+    }
 
 
 
