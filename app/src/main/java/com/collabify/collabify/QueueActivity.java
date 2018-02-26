@@ -121,7 +121,6 @@ public class QueueActivity extends AppCompatActivity implements
 
         Log.d("QueueActivity", "onCreate Intents: " + Token +"\n " + ID + "\n "+ userID);
 
-
         Config playerConfig = new Config(this, Token, MainActivity.getClientId());
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
             @Override
@@ -193,6 +192,7 @@ public class QueueActivity extends AppCompatActivity implements
                 intent.putExtra(ROOM_NAME, ID);
                 intent.putExtra(USER, userID);
                 intent.putExtra(IS_HOST, isHost);
+                mPlayer.logout();
 
                 startActivity(intent);
                 //mItems.add(new RecyclerViewClass("title", " artist", 0, mUris.remove(mUris.size() - 1)));
@@ -376,7 +376,7 @@ public class QueueActivity extends AppCompatActivity implements
                 TextView title = findViewById(R.id.textView4);
                 TextView artist = findViewById(R.id.textView5);
                 ImageView image = findViewById(R.id.imageView);
-                if (currentRoom != null && currentRoom.getCurrentlyPlaying() != null){
+                if (currentRoom != null && dataSnapshot.child("title") != null){
                     title.setText((CharSequence) dataSnapshot.child("title").getValue(String.class));
                     artist.setText((CharSequence) dataSnapshot.child("artist").getValue(String.class));
                     new DownloadImageTask(image).execute(dataSnapshot.child("imageURL").getValue(String.class));
@@ -474,6 +474,11 @@ public class QueueActivity extends AppCompatActivity implements
                 if (mItems.size() != 0) {
                     Log.d("PLAAY", mItems.get(0).getUri());
                     mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
+                    if(mPlayer.getPlaybackState().isPlaying){
+                        playButton.setImageResource(android.R.drawable.ic_media_play);
+                    } else {
+                        playButton.setImageResource(android.R.drawable.ic_media_pause);
+                    }
                     TextView title = findViewById(R.id.textView4);
                     TextView artist = findViewById(R.id.textView5);
                     ImageView image = findViewById(R.id.imageView);
@@ -509,6 +514,13 @@ public class QueueActivity extends AppCompatActivity implements
     public void onStop() {
         super.onStop();
         mAdapter.stopListening();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        currentRoom.setHostID(null);
+        data.updateChild(Room.class, currentRoom.getRoomID(), currentRoom);
     }
 
     public void doClick(){

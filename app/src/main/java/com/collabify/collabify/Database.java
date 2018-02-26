@@ -445,7 +445,8 @@ public class Database {
     }
 
     public static String removeIllegalChars(String name) {
-        name = name.replaceAll("[^a-zA-z0-9 ]","");
+        name = name.replaceAll("\\$","S");
+        name = name.replaceAll("[^a-zA-z0-9\\- ]","");
         name = name.replaceAll(" ", "-").toLowerCase();
         return name;
     }

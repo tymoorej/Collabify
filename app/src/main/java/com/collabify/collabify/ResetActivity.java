@@ -43,7 +43,7 @@ public class ResetActivity extends AppCompatActivity {
             public void onClick(View view) {
                 d.clearDatabase();
 
-                Intent intent = new Intent(getApplicationContext(), HostAndJoinActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra(IS_HOST, true);
                 intent.putExtra(ROOM_NAME, roomID);
                 intent.putExtra(TOKEN, Token);

@@ -16,8 +16,12 @@ public class EnterIDActivity extends AppCompatActivity {
     public static final String ROOM_NAME = "com.collabify.collabify.MESSAGE";
     public static final String TOKEN = "com.collabify.collabify.TOKEN";
     public static final String USER = "com.collabify.collabify.USER";
+    public static final String IS_HOST = "com.collabify.collabify.HOST";
+    public static final String TAG = "EnterIDActivity";
     public static String uID;
     public String Token;
+    public boolean isHost;
+    private Room currentRoom = new Room();
     public Database d;
     public User u;
     public ArrayList<User> users = new ArrayList<>();
@@ -30,6 +34,7 @@ public class EnterIDActivity extends AppCompatActivity {
         setContentView(R.layout.activity_enter_id);
         Intent intent = getIntent();
         Token = intent.getStringExtra(TOKEN);
+        isHost = intent.getBooleanExtra(IS_HOST, false);
         d = new Database(getApplicationContext());
         d.readData(users, rooms);
 
@@ -46,10 +51,34 @@ public class EnterIDActivity extends AppCompatActivity {
         String roomID = roomText.getText().toString();
         roomID = Database.removeIllegalChars(roomID);
 
+
+
         String uID = "";
         u = new User();
-        uID = d.addUser(u,false);
+        uID = d.addUser(u,isHost);
         u.setUserRoom(roomID);
+
+        //TODO: Make it so that the rooms host gets cleared when the app closes
+//        if (isHost) {
+//            currentRoom = Room.getRoomFromID(roomID, rooms);
+//            if (currentRoom != null && currentRoom.getHostID() == null && u != null) {
+//                currentRoom.setHostID(u.getUserID());
+//                Log.d(TAG, "joinRoom: " + currentRoom);
+//
+//                d.updateChild(currentRoom.getClass(), currentRoom.getRoomID(), currentRoom);
+//                d.updateChild(u.getClass(), uID, u);
+//
+//                intent.putExtra(ROOM_NAME, roomID);
+//                intent.putExtra(USER,uID);
+//                intent.putExtra(TOKEN,Token);
+//                Log.d("enterIDact", "joinRoom: As Host"+roomID+ " " + u.getUserID());
+//                startActivity(intent);
+//            }
+//            else {
+//                Toast.makeText(getApplicationContext(), "Already a host...",
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        }
 
 
 

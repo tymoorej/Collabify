@@ -81,6 +81,15 @@ public class HostAndJoinActivity extends AppCompatActivity {
         });
     }
 
+    public void joinHostPress(View view){
+        Log.d("HostandJoinButton", "joinPress: ");
+
+        Intent intent = new Intent(this, EnterIDActivity.class);
+        intent.putExtra(TOKEN, Token);
+        intent.putExtra(IS_HOST, true);
+        startActivity(intent);
+    }
+
     public void joinPress(View view){
 
 
