@@ -7,13 +7,19 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -51,7 +57,7 @@ import com.spotify.sdk.android.player.SpotifyPlayer;
 
 
 public class QueueActivity extends AppCompatActivity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback{
+        SpotifyPlayer.NotificationCallback, ConnectionStateCallback, FriendAdapter.ItemClickListener{
 
     private SpotifyPlayer mPlayer;
     public static final int REQUEST_CODE = 1;
@@ -86,7 +92,13 @@ public class QueueActivity extends AppCompatActivity implements
     public static Song nowPlaying;
     public static User u = new User();
     public static User host = new User();
-
+    private DrawerLayout mDrawerLayout;
+    private RecyclerView friendsRecyclerView;
+    private LinearLayoutManager friendLayoutManager;
+    private FriendAdapter friendAdapter;
+    private List<String> friendList= new ArrayList<String>();
+    private List<String> selectedFriendList= new ArrayList<String>();
+    private Button addFriends;
 
 
     private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
@@ -115,8 +127,38 @@ public class QueueActivity extends AppCompatActivity implements
         ID = intent.getStringExtra(ROOM_NAME);
         Token = intent.getStringExtra(TOKEN);
 
+        // Adding toolbar so side drawer can be opened from top of page
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionbar = getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        //Handling when users click on stuff inside the drawer
+        mDrawerLayout = findViewById(R.id.drawer_layout);
 
+        friendList.add("friend1");
+        friendList.add("friend2");
+        friendList.add("friend3");
+        friendList.add("friend4");
+        friendList.add("friend5");
+        friendList.add("friend6");
+        friendsRecyclerView = (RecyclerView) findViewById(R.id.friends_list);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        friendsRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        friendLayoutManager = new LinearLayoutManager(this);
+        friendsRecyclerView.setLayoutManager(friendLayoutManager);
+
+        // specify an adapter (see also next example)
+        friendAdapter = new FriendAdapter(this, friendList);
+        friendAdapter.setClickListener(this);
+        friendsRecyclerView.setAdapter(friendAdapter);
+
+        addFriends = findViewById(R.id.add_friends);
 
 
         Log.d("QueueActivity", "onCreate Intents: " + Token +"\n " + ID + "\n "+ userID);
@@ -497,6 +539,23 @@ public class QueueActivity extends AppCompatActivity implements
                 }
             }
         });
+
+        addFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.closeDrawers();
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -527,6 +586,15 @@ public class QueueActivity extends AppCompatActivity implements
         //refreshButton.callOnClick();
         refreshButton.performClick();
     }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Toast.makeText(this, "You clicked " + friendAdapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        view.setBackgroundColor(getResources().getColor(R.color.grey));
+        selectedFriendList.add(friendAdapter.getItem(position));
+        Log.d("selectedFriends:" , selectedFriendList.toString());
+    }
+
 
     @Override
     public void onLoggedIn() {
