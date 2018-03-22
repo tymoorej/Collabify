@@ -266,7 +266,6 @@ public class QueueActivity extends AppCompatActivity implements
                 return new CustomRecyclerViewHolder(v);
             }
 
-            //TODO:Make it so that you can only vote once
 
             @Override
             protected void onBindViewHolder(final @NonNull com.collabify.collabify.CustomRecyclerViewHolder holder, int position, @NonNull Song model) {
