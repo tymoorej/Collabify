@@ -660,6 +660,8 @@ public class QueueActivity extends AppCompatActivity implements
         sendIntent.setType("vnd.android-dir/mms-sms");
         sendIntent.putExtra("address"  , sendTo.toString());
         sendIntent.putExtra("sms_body"  , "There's a party going on! Join room " + room + " now on your Collabify app!!! It's Lit!");
+        Log.d(TAG, "sendSMS: " + "There's a party going on! Join room '" + room + "' now on your Collabify app!!! It's Lit!");
+        Log.d(TAG, "sendSMS: " + sendTo.toString());
 
         try {
             startActivity(sendIntent);
