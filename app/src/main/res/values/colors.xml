@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="primary_button">#cf34b0</color>
     <color name="grey">#CCCCCC</color>
+    <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="secondary_button">#00e9ff</color>
     <color name="tertiary_button">#f7a400</color>

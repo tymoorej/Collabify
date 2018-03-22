@@ -1,11 +1,15 @@
 
 package com.collabify.collabify;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -97,6 +101,7 @@ public class QueueActivity extends AppCompatActivity implements
     private LinearLayoutManager friendLayoutManager;
     private FriendAdapter friendAdapter;
     private List<String> friendList= new ArrayList<String>();
+    private List<Contact> contacts= new ArrayList<Contact>();
     private List<String> selectedFriendList= new ArrayList<String>();
     private Button addFriends;
 
@@ -127,6 +132,8 @@ public class QueueActivity extends AppCompatActivity implements
         ID = intent.getStringExtra(ROOM_NAME);
         Token = intent.getStringExtra(TOKEN);
 
+        // SETTING UP THE SIDE DRAWER
+
         // Adding toolbar so side drawer can be opened from top of page
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -137,12 +144,18 @@ public class QueueActivity extends AppCompatActivity implements
         //Handling when users click on stuff inside the drawer
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        friendList.add("friend1");
-        friendList.add("friend2");
-        friendList.add("friend3");
-        friendList.add("friend4");
-        friendList.add("friend5");
-        friendList.add("friend6");
+        contacts = retrieveContacts();
+
+        for (Contact contact: contacts) {
+            friendList.add(contact.getName());
+        }
+
+//        friendList.add("friend1");
+//        friendList.add("friend2");
+//        friendList.add("friend3");
+//        friendList.add("friend4");
+//        friendList.add("friend5");
+//        friendList.add("friend6");
         friendsRecyclerView = (RecyclerView) findViewById(R.id.friends_list);
 
         // use this setting to improve performance if you know that changes
@@ -542,6 +555,14 @@ public class QueueActivity extends AppCompatActivity implements
         addFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ArrayList<String> numbers = new ArrayList<>();
+                HashMap<String, Contact> contactMap =  contactToMap(contacts);
+                for (String name: selectedFriendList) {
+                    if (contactMap.containsKey(name)) {
+                        numbers.add(contactMap.get(name).getPhoneNumber());
+                    }
+                }
+                sendSMS(numbers, currentRoom.getRoomID());
                 mDrawerLayout.closeDrawers();
             }
         });
@@ -551,11 +572,117 @@ public class QueueActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                doClick();
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Toast.makeText(this, "You clicked " + friendAdapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        String friend = friendAdapter.getItem(position);
+        if (selectedFriendList.contains(friend)) {
+            view.setBackgroundColor(getResources().getColor(R.color.white));
+            Log.d(TAG, "already selected " + friend);
+        } else {
+            view.setBackgroundColor(getResources().getColor(R.color.grey));
+            selectedFriendList.add(friendAdapter.getItem(position));
+            Log.d("selectedFriends:" , selectedFriendList.toString());
+        }
+    }
+
+    //MARK: HELPER FUNCTIONS
+
+    public void doClick(){
+        //refreshButton.callOnClick();
+        refreshButton.performClick();
+    }
+
+    public ArrayList<Contact> retrieveContacts() {
+
+        ArrayList<Contact> contactList = new ArrayList<>();
+
+    /*
+    Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null, null, null);
+    Log.d(TAG, "retrieveContacts: "+cursor.getCount());
+
+    while (cursor.moveToNext()) {
+
+        String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+        String phoneNo = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+        contactList.add(new Contact(name, phoneNo));
+        Log.d(TAG, "retrieveContacts: " +);
+    }
+
+    cursor.close();*/
+
+
+        ContentResolver cr = getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                null, null, null, null);
+        Log.d(TAG, "retrieveContacts: "+ cur.getCount());
+        if (cur.getCount() > 0) {
+            while (cur.moveToNext()) {
+                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                if (Integer.parseInt(cur.getString(
+                        cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        contactList.add(new Contact( name, phoneNo));
+                    }
+                    pCur.close();
+                }
+            }
+        }
+        return contactList;
+    }
+
+    public void sendSMS(List<String> numbers ,String room){
+        StringBuilder sendTo = new StringBuilder();
+
+        for (String number: numbers) {
+            sendTo.append(number);
+            sendTo.append(";");
+        }
+
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+        sendIntent.setData(Uri.parse("smsto:"));
+        sendIntent.setType("vnd.android-dir/mms-sms");
+        sendIntent.putExtra("address"  , sendTo.toString());
+        sendIntent.putExtra("sms_body"  , "There's a party going on! Join room " + room + " now on your Collabify app!!! It's Lit!");
+
+        try {
+            startActivity(sendIntent);
+            finish();
+            Log.i("Finished sending SMS...", "");
+
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(),
+                    "SMS faild, please try again later!",
+                    Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+
+    public HashMap<String, Contact> contactToMap(List<Contact> contacts) {
+        HashMap<String, Contact> ret = new HashMap<>();
+        for (Contact contact: contacts) {
+            ret.put(contact.getName(), contact);
+        }
+        return ret;
+    }
+
+    //MARK: LIFECYCLE EVENTS
 
     @Override
     public void onStart() {
@@ -579,19 +706,6 @@ public class QueueActivity extends AppCompatActivity implements
         super.onDestroy();
         currentRoom.setHostID(null);
         data.updateChild(Room.class, currentRoom.getRoomID(), currentRoom);
-    }
-
-    public void doClick(){
-        //refreshButton.callOnClick();
-        refreshButton.performClick();
-    }
-
-    @Override
-    public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + friendAdapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
-        view.setBackgroundColor(getResources().getColor(R.color.grey));
-        selectedFriendList.add(friendAdapter.getItem(position));
-        Log.d("selectedFriends:" , selectedFriendList.toString());
     }
 
 
