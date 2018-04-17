@@ -26,7 +26,7 @@ public class CustomTrackAdapter extends RecyclerView.Adapter<CustomTrackAdapter.
     public CustomTrackAdapter.CustomRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(mContext)
-                .inflate(R.layout.layout2, parent, false);
+                .inflate(R.layout.activity_queue, parent, false);
         //set the margin if any, will be discussed in next blog
         return new CustomTrackAdapter.CustomRecyclerViewHolder(v);
     }

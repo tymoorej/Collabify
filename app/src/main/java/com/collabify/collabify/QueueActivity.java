@@ -4,14 +4,12 @@ package com.collabify.collabify;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -32,9 +30,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.app.Activity;
 import android.widget.Toast;
+import android.view.MotionEvent;
 
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,9 +46,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
@@ -58,10 +53,11 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
+import com.collabify.collabify.SimpleGestureFilter.SimpleGestureListener;
 
 
 public class QueueActivity extends AppCompatActivity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback, FriendAdapter.ItemClickListener{
+        SpotifyPlayer.NotificationCallback, ConnectionStateCallback, FriendAdapter.ItemClickListener, SimpleGestureListener{
 
     private SpotifyPlayer mPlayer;
     public static final int REQUEST_CODE = 1;
@@ -104,6 +100,7 @@ public class QueueActivity extends AppCompatActivity implements
     private List<Contact> contacts= new ArrayList<Contact>();
     private List<String> selectedFriendList= new ArrayList<String>();
     private Button addFriends;
+    private SimpleGestureFilter detector;
 
 
     private final Player.OperationCallback mOperationCallback = new Player.OperationCallback() {
@@ -118,6 +115,7 @@ public class QueueActivity extends AppCompatActivity implements
         }
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,27 +199,33 @@ public class QueueActivity extends AppCompatActivity implements
             TextView title = findViewById(R.id.textView4);
             TextView artist = findViewById(R.id.textView5);
             ImageView image = findViewById(R.id.imageView);
+            ImageButton playbutton = findViewById(R.id.playButton);
             title.setText((CharSequence) nowPlaying.getTitle());
             artist.setText((CharSequence) nowPlaying.getArtist());
             new DownloadImageTask(image).execute(nowPlaying.getImageURL());
-            playButton.setImageResource(android.R.drawable.ic_media_pause);
+            new DownloadRoundedImageTask(playbutton).execute(nowPlaying.getImageURL());
+            playButton.setForeground(ContextCompat.getDrawable(this, android.R.drawable.ic_media_pause));
         } else{
             if(nowPlaying != null && currentRoom.getCurrentlyPlaying() != null) {
                 TextView title = findViewById(R.id.textView4);
                 TextView artist = findViewById(R.id.textView5);
                 ImageView image = findViewById(R.id.imageView);
+                ImageButton playbutton = findViewById(R.id.playButton);
                 title.setText((CharSequence) currentRoom.getCurrentlyPlaying().getTitle());
                 artist.setText((CharSequence) currentRoom.getCurrentlyPlaying().getArtist());
                 new DownloadImageTask(image).execute(currentRoom.getCurrentlyPlaying().getImageURL());
+                new DownloadImageTask(playbutton).execute(currentRoom.getCurrentlyPlaying().getImageURL());
             } else if (nowPlaying != null) {
                 TextView title = findViewById(R.id.textView4);
                 TextView artist = findViewById(R.id.textView5);
                 ImageView image = findViewById(R.id.imageView);
+                ImageButton playbutton = findViewById(R.id.playButton);
                 title.setText((CharSequence) nowPlaying.getTitle());
                 artist.setText((CharSequence) nowPlaying.getArtist());
                 new DownloadImageTask(image).execute(nowPlaying.getImageURL());
+                new DownloadRoundedImageTask(playbutton).execute(nowPlaying.getImageURL());
             }
-            playButton.setImageResource(android.R.drawable.ic_media_play);
+            playButton.setForeground(ContextCompat.getDrawable(this, android.R.drawable.ic_media_play));
         }
         final TextView roomID = findViewById(R.id.RoomID);
         isHost = intent.getBooleanExtra(IS_HOST, false);
@@ -230,12 +234,12 @@ public class QueueActivity extends AppCompatActivity implements
 
         if(isHost){
             playButton.setVisibility(View.VISIBLE);
-            skipButton.setVisibility(View.VISIBLE);
-            toDelete.setVisibility(View.VISIBLE);
+            //skipButton.setVisibility(View.VISIBLE);
+            //toDelete.setVisibility(View.VISIBLE);
         } else{
             playButton.setVisibility(View.INVISIBLE);
-            skipButton.setVisibility(View.INVISIBLE);
-            toDelete.setVisibility(View.INVISIBLE);
+            //skipButton.setVisibility(View.INVISIBLE);
+            //toDelete.setVisibility(View.INVISIBLE);
         }
 
         toDelete.setOnClickListener(new View.OnClickListener() {
@@ -430,10 +434,12 @@ public class QueueActivity extends AppCompatActivity implements
                 TextView title = findViewById(R.id.textView4);
                 TextView artist = findViewById(R.id.textView5);
                 ImageView image = findViewById(R.id.imageView);
+                ImageButton playbutton = findViewById(R.id.playButton);
                 if (currentRoom != null && dataSnapshot.child("title") != null){
                     title.setText((CharSequence) dataSnapshot.child("title").getValue(String.class));
                     artist.setText((CharSequence) dataSnapshot.child("artist").getValue(String.class));
                     new DownloadImageTask(image).execute(dataSnapshot.child("imageURL").getValue(String.class));
+                    new DownloadRoundedImageTask(playbutton).execute(dataSnapshot.child("imageURL").getValue(String.class));
                 }
             }
 
@@ -503,14 +509,14 @@ public class QueueActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 Log.d("PlayButton", String.valueOf(mPlayer.getPlaybackState().isPlaying));
                 if(mPlayer.getPlaybackState().isPlaying){
-                    playButton.setImageResource(android.R.drawable.ic_media_play);
+                    playButton.setForeground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_media_play));
                     mPlayer.pause(mOperationCallback);
                     //nowPlaying.setPositionInMs();
                     if (mItems.size() != 0) {
                         Log.d("PAUSE", mItems.get(0).getUri());
                     }
                 } else {
-                    playButton.setImageResource(android.R.drawable.ic_media_pause);
+                    playButton.setForeground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_media_pause));
                     if (nowPlaying!=null) {
                         mPlayer.resume(mOperationCallback);
                     }
@@ -521,6 +527,11 @@ public class QueueActivity extends AppCompatActivity implements
             }
         });
 
+        ImageView albumBackground = findViewById(R.id.imageView);
+
+        detector = new SimpleGestureFilter(QueueActivity.this, this);
+
+
         skipButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -529,16 +540,18 @@ public class QueueActivity extends AppCompatActivity implements
                     Log.d("PLAAY", mItems.get(0).getUri());
                     mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
                     if(mPlayer.getPlaybackState().isPlaying){
-                        playButton.setImageResource(android.R.drawable.ic_media_play);
+                        playButton.setForeground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_media_play));
                     } else {
-                        playButton.setImageResource(android.R.drawable.ic_media_pause);
+                        playButton.setForeground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_media_pause));
                     }
                     TextView title = findViewById(R.id.textView4);
                     TextView artist = findViewById(R.id.textView5);
                     ImageView image = findViewById(R.id.imageView);
+                    ImageButton playbutton = findViewById(R.id.playButton);
                     title.setText((CharSequence) mItems.get(0).getTitle());
                     artist.setText((CharSequence) mItems.get(0).getArtist());
                     new DownloadImageTask(image).execute(mItems.get(0).getImageURL());
+                    new DownloadRoundedImageTask(playbutton).execute(mItems.get(0).getImageURL());
                     nowPlaying = mItems.get(0);
                     mItems.remove(0);
                     currentRoom.setCurrentlyPlaying(nowPlaying);
@@ -684,6 +697,46 @@ public class QueueActivity extends AppCompatActivity implements
         return ret;
     }
 
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent me) {
+        // Call onTouchEvent of SimpleGestureFilter class
+        this.detector.onTouchEvent(me);
+        return super.dispatchTouchEvent(me);
+    }
+
+    @Override
+    public void onSwipe(int direction) {
+
+        //Detect the swipe gestures and display toast
+        String showToastMessage = "";
+
+        switch (direction) {
+
+            case SimpleGestureFilter.SWIPE_RIGHT:
+                showToastMessage = "You have Swiped Right.";
+                break;
+            case SimpleGestureFilter.SWIPE_LEFT:
+                showToastMessage = "You have Swiped Left.";
+                break;
+            case SimpleGestureFilter.SWIPE_DOWN:
+                showToastMessage = "You have Swiped Down.";
+                break;
+            case SimpleGestureFilter.SWIPE_UP:
+                showToastMessage = "You have Swiped Up.";
+                break;
+
+        }
+        Toast.makeText(this, showToastMessage, Toast.LENGTH_SHORT).show();
+    }
+
+
+    //Toast shown when double tapped on screen
+    @Override
+    public void onDoubleTap() {
+        Toast.makeText(this, "You have Double Tapped.", Toast.LENGTH_SHORT)
+                .show();
+    }
     //MARK: LIFECYCLE EVENTS
 
     @Override

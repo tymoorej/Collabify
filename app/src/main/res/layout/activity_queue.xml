@@ -1,195 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Use DrawerLayout as root container for activity -->
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.collabify.collabify.QueueActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-    <Button
-        android:id="@+id/addSong"
-        android:layout_width="287dp"
-        android:layout_height="42dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_button"
-        android:text="Add Song"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient"
+        >
+
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:alpha="0.7"
+            android:scaleType="centerCrop"
+            android:src="@drawable/gradient" />
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/black"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
         <TextView
             android:id="@+id/RoomID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:text="TextView"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginTop="14dp"
+            android:background="@color/black"
+            android:fontFamily="@font/montserrat_bold"
+            android:padding="5dp"
+            android:paddingTop="5dp"
+            android:text="Room Name"
             android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
             android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            android:textStyle="bold" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="359dp"
-        android:layout_height="166dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/RoomID"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.555"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-       >
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/RoomID"
+            android:layout_marginTop="36dp"
+            android:background="@color/black"
+            android:fontFamily="@font/montserrat_bold"
+            android:padding="5dp"
+            android:paddingTop="5dp"
+            android:text="Now Playing"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="296dp"
-            android:layout_height="131dp"
-            android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            app:layout_constraintLeft_toLeftOf="parent"
+
+        <ImageButton
+            android:id="@+id/playButton"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_alignStart="@id/imageView"
+            android:layout_below="@+id/imageView"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="-60dp"
+            android:elevation="6dp"
+            android:foreground="@android:drawable/ic_media_play"
+            android:foregroundGravity="center_vertical|center_horizontal"
+            android:padding="20dp"
+            android:paddingLeft="30dp"
+            android:paddingStart="20dp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/collabify" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:layout_marginTop="-32dp"
+            android:layout_toEndOf="@id/playButton"
+            android:elevation="6dp"
+            android:fontFamily="@font/montserrat"
+            android:paddingLeft="30dp"
+            android:text="Track Title"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView4"
+            android:layout_marginTop="9dp"
+            android:layout_toEndOf="@id/playButton"
+            android:elevation="6dp"
+            android:fontFamily="@font/montserrat"
+            android:paddingLeft="30dp"
+            android:text="Artist"
+            android:textColor="#fff"
+            android:textSize="14sp" />
+
+        <!--RelativeLayout
+            android:id="@+id/profile_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:elevation="5dp"
+            android:background="@color/black"
+            android:paddingBottom="24dp">
+
+
+
+        </RelativeLayout-->
+
+        <Button
+            android:id="@+id/addSong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/recyclerView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-69dp"
+            android:background="@drawable/rounded_button_black"
+            android:fontFamily="@font/montserrat"
+            android:text="Add Song"
+            android:textColor="@color/white" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="370dp"
+            android:layout_height="303dp"
+            android:layout_below="@+id/textView5"
+            android:visibility="invisible"
+            tools:ignore="UnknownId">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <Button
+            android:id="@+id/refreshButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="148dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="320dp"
+            android:background="@android:color/transparent"
+            android:text="Load Playlist"
+            android:visibility="visible"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@id/linearLayout"/>
 
-        <LinearLayout
+        <ImageButton
+            android:id="@+id/toDeleteButton"
+            android:layout_width="35dp"
+            android:layout_height="39dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/grey"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf="@id/addSong"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/addSong"
+            app:srcCompat="@android:drawable/ic_delete" />
+
+        <ImageButton
+            android:id="@+id/skip_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:visibility="invisible"
+            android:backgroundTint="@color/primary_button"
+            app:srcCompat="@android:drawable/ic_media_next" />
+    </RelativeLayout>
+
+        <include layout="@layout/new_friends_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Now Playing"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Title"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Artist"
-                android:textSize="12sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/playButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:backgroundTint="@color/primary_button"
-                    app:srcCompat="@android:drawable/ic_media_play" />
-
-                <ImageButton
-                    android:id="@+id/skip_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:backgroundTint="@color/primary_button"
-                    app:srcCompat="@android:drawable/ic_media_next" />
-            </LinearLayout>
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="370dp"
-        android:layout_height="239dp"
-        android:layout_marginBottom="8dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/addSong"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:ignore="UnknownId" />
-
-    <Button
-        android:id="@+id/refreshButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="148dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="320dp"
-        android:background="@android:color/transparent"
-        android:text="Load Playlist"
-        android:visibility="visible"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout"/>
-
-    <ImageButton
-        android:id="@+id/toDeleteButton"
-        android:layout_width="35dp"
-        android:layout_height="39dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginStart="8dp"
-        android:backgroundTint="@color/grey"
-        android:visibility="invisible"
-        app:layout_constraintTop_toTopOf="@id/addSong"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/addSong"
-        app:srcCompat="@android:drawable/ic_delete" />
-
-
-</android.support.constraint.ConstraintLayout>
-
-    <include layout="@layout/new_friends_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:layout_gravity="left"/>
+            android:fitsSystemWindows="true"
+            android:layout_gravity="left"/>
 
 
 
-    <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
+        <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
 
 
-</android.support.v4.widget.DrawerLayout>
+    </android.support.v4.widget.DrawerLayout>
+
