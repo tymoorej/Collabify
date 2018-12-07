@@ -539,11 +539,12 @@ public class QueueActivity extends AppCompatActivity implements
                 if (mItems.size() != 0) {
                     Log.d("PLAAY", mItems.get(0).getUri());
                     mPlayer.playUri(null, mItems.get(0).getUri(), 0, 0); //2TpxZ7JUBn3uw46aR7qd6V
-                    if(mPlayer.getPlaybackState().isPlaying){
-                        playButton.setForeground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_media_play));
-                    } else {
-                        playButton.setForeground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_media_pause));
-                    }
+                    playButton.setForeground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_media_pause));
+//                    if(mPlayer.getPlaybackState().isPlaying){
+//                        playButton.setForeground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_media_play));
+//                    } else {
+//                        playButton.setForeground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_media_pause));
+//                    }
                     TextView title = findViewById(R.id.textView4);
                     TextView artist = findViewById(R.id.textView5);
                     ImageView image = findViewById(R.id.imageView);
@@ -718,6 +719,7 @@ public class QueueActivity extends AppCompatActivity implements
                 break;
             case SimpleGestureFilter.SWIPE_LEFT:
                 showToastMessage = "You have Swiped Left.";
+                skipButton.performClick();
                 break;
             case SimpleGestureFilter.SWIPE_DOWN:
                 showToastMessage = "You have Swiped Down.";
